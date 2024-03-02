@@ -4,6 +4,14 @@ import edu.columbia.cs.psl.phosphor.instrumenter.InvokedViaInstrumentation;
 import edu.columbia.cs.psl.phosphor.instrumenter.TaintMethodRecord;
 import edu.columbia.cs.psl.phosphor.runtime.StringUtils;
 import edu.columbia.cs.psl.phosphor.struct.SinglyLinkedList;
+import edu.utexas.ece.flakytracker.agent.FlakyClassTracer;
+import edu.utexas.ece.flakytracker.agent.FlakyTrakerTransformer;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.IllegalClassFormatException;
+import java.security.ProtectionDomain;
 
 import static edu.columbia.cs.psl.phosphor.Configuration.controlFlowManagerPackage;
 import static edu.columbia.cs.psl.phosphor.Configuration.taintTagFactoryPackage;
@@ -22,6 +30,7 @@ public final class Phosphor {
 
     public static void initialize(String agentArgs, InstrumentationAdaptor instrumentation) {
         Phosphor.instrumentation = instrumentation;
+        instrumentation.addTransformer(new FlakyTrakerTransformer());
         instrumentation.addTransformer(new ClassSupertypeReadingTransformer());
         RUNTIME_INST = true;
         if (agentArgs != null || Configuration.IS_JAVA_8) {
