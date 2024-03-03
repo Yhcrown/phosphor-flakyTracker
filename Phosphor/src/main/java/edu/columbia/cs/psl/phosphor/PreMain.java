@@ -11,6 +11,7 @@ import edu.columbia.cs.psl.phosphor.struct.harmony.util.HashSet;
 import edu.columbia.cs.psl.phosphor.struct.harmony.util.LinkedList;
 import edu.columbia.cs.psl.phosphor.struct.harmony.util.List;
 import edu.columbia.cs.psl.phosphor.struct.harmony.util.Set;
+import edu.utexas.ece.flakytracker.agent.FlakyTrackerTransformer;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -48,7 +49,11 @@ public class PreMain {
     }
 
     public static void premain(String args, Instrumentation inst) {
+
+
         inst.addTransformer(new ClassSupertypeReadingTransformer());
+        inst.addTransformer(new FlakyTrackerTransformer());
+
         RUNTIME_INST = true;
         if(args != null) {
             PhosphorOption.configure(true, parseArgs(args));
@@ -63,6 +68,7 @@ public class PreMain {
         BasicSourceSinkManager.getInstance().isSourceOrSinkOrTaintThrough(Object.class);
         inst.addTransformer(new PCLoggingTransformer());
         inst.addTransformer(new SourceSinkTransformer(), true);
+
         instrumentation = inst;
     }
 

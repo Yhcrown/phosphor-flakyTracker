@@ -115,7 +115,7 @@
                     <failsOnError>true</failsOnError>
                     <excludes>
                         **/java/lang/**/*.java,**/java/util/**/*.java,**/sun/misc/**/*.java,
-                        **/struct/harmony/**/*.java,**/org/objectweb/asm/**/*.java
+                        **/struct/harmony/**/*.java,**/org/objectweb/asm/**/*.java,**/edu/utexas/ece/flakytracker/**/*
                     </excludes>
                     <sourceDirectories>
                         <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
