@@ -88,7 +88,5 @@ public class FlakyTaintLabel {
                 '}';
     }
 
-    public static int getUniqueIndex(){
-        return index++;
-    }
+
 }

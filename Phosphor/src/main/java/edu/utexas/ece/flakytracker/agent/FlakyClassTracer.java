@@ -32,11 +32,16 @@ public class FlakyClassTracer extends ClassVisitor {
 
     static List<String> globalFields;
 
+    static int labelIndex = 0;
+
+    public static int getLabelIndex(){
+        return labelIndex++;
+    }
+
     static {
         nonDeterministicAPI = new ArrayList<>();
         trackAPI = new ArrayList<>();
         globalFields = new ArrayList<>();
-
 
 
         API nextInt = new API("java/util/Random", "nextInt", "()I");
@@ -53,7 +58,7 @@ public class FlakyClassTracer extends ClassVisitor {
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        if (access == (ACC_PUBLIC | ACC_SUPER)){
+        if (access == (ACC_PUBLIC | ACC_SUPER)) {
             className = name;
         }
         super.visit(version, access, name, signature, superName, interfaces);
@@ -69,10 +74,10 @@ public class FlakyClassTracer extends ClassVisitor {
                 mv = new FlakyMethodVisitor(api, mv);
                 currentTestName = name;
             }
-        }else if("<clinit>".equals(name)){
+        } else if ("<clinit>".equals(name)) {
             mv = new StaticFieldVisitor(api, mv);
-        }else if ("<init>".equals(name)){
-
+        } else if ("<init>".equals(name)) {
+            mv = new StaticFieldVisitor(api, mv);
         }
         return mv;
     }
@@ -83,7 +88,7 @@ public class FlakyClassTracer extends ClassVisitor {
         boolean isFinal = (access & ACC_FINAL) == 0;
 
         //TODO: track static fields
-        if (!isFinal){
+        if (!isFinal) {
             globalFields.add(name);
         }
 
@@ -92,7 +97,7 @@ public class FlakyClassTracer extends ClassVisitor {
     }
 
 
-    private class StaticFieldVisitor extends MethodVisitor{
+    private class StaticFieldVisitor extends MethodVisitor {
 
         public StaticFieldVisitor(int api) {
             super(api);
@@ -103,14 +108,16 @@ public class FlakyClassTracer extends ClassVisitor {
         }
 
     }
+
     private class FlakyMethodVisitor extends MethodVisitor {
 
         boolean isTestcase;
+
         public FlakyMethodVisitor(int api, MethodVisitor methodVisitor) {
             super(api, methodVisitor);
         }
 
-        public void callTaintedMethod(String oriDescriptor){
+        public void callTaintedMethod(String oriDescriptor) {
             String returnType = API.getReturnType(oriDescriptor);
             String descriptor;
             String methodName;
@@ -181,8 +188,8 @@ public class FlakyClassTracer extends ClassVisitor {
                     descriptor = "([SLjava/lang/Object;)[S";
                     break;
                 default:
-                    // 对于不支持的类型，可以抛出异常或者选择忽略
-                    throw new IllegalArgumentException("Unsupported return type for tainting: " + returnType);
+                    methodName = "taintedReference";
+                    descriptor = "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;";
             }
             super.visitMethodInsn(Opcodes.INVOKESTATIC, tainterClass, methodName, descriptor, false);
         }
@@ -260,15 +267,19 @@ public class FlakyClassTracer extends ClassVisitor {
         public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
             super.visitFieldInsn(opcode, owner, name, descriptor);
 
-            if (opcode == PUTSTATIC){
+            if (opcode == PUTFIELD){
                 super.visitTypeInsn(NEW, taintClassLabel);
                 super.visitInsn(DUP);
+
                 super.visitLdcInsn(FlakyTaintLabel.FIELD);
+
                 super.visitLdcInsn(owner+"."+name);
                 super.visitLdcInsn(className);
                 super.visitLdcInsn(lineNumber);
-                super.visitLdcInsn(FlakyTaintLabel.getUniqueIndex()); //label
+                super.visitLdcInsn(getLabelIndex()); //label
                 super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+
+
                 callTaintedMethod(descriptor);
             }
         }
@@ -288,7 +299,6 @@ public class FlakyClassTracer extends ClassVisitor {
                     if (API.isPrimitiveType(assertType))
                         callBoxingMethod(assertType);
 
-                    callBoxingMethod(assertType);
 
                     super.visitLdcInsn(currentTestName);
 
@@ -309,16 +319,14 @@ public class FlakyClassTracer extends ClassVisitor {
                         super.visitInsn(DUP_X1);
                     }
 
-
-                    callBoxingMethod(assertType);
+                    if (API.isPrimitiveType(assertType))
+                        callBoxingMethod(assertType);
 
                     super.visitLdcInsn(currentTestName);
 
                     super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                 }
             }
-
-
 
 
             super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
@@ -330,10 +338,10 @@ public class FlakyClassTracer extends ClassVisitor {
                     super.visitTypeInsn(NEW, taintClassLabel);
                     super.visitInsn(DUP);
                     super.visitLdcInsn(FlakyTaintLabel.RANDOM);
-                    super.visitLdcInsn(owner+"."+name);
+                    super.visitLdcInsn(owner + "." + name);
                     super.visitLdcInsn(className);
                     super.visitLdcInsn(lineNumber);
-                    super.visitLdcInsn(FlakyTaintLabel.getUniqueIndex()); //label
+                    super.visitLdcInsn(getLabelIndex()); //label
                     super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
                     callTaintedMethod(descriptor);
                 }
