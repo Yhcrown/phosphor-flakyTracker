@@ -31,7 +31,7 @@ public class FlakyClassTracer extends ClassVisitor {
 
     static String className;
 
-    static boolean haveClinit;
+    static boolean haveClinit = false;
 
     static List<String[]> globalFields;
 
@@ -63,9 +63,7 @@ public class FlakyClassTracer extends ClassVisitor {
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        if (access == (ACC_PUBLIC | ACC_SUPER)) {
-            className = name;
-        }
+        className = name;
         super.visit(version, access, name, signature, superName, interfaces);
     }
 
@@ -107,7 +105,7 @@ public class FlakyClassTracer extends ClassVisitor {
     }
 
 
-    private class GlobalFieldVistor extends FlakyTrackerBaseVistor{
+    private class GlobalFieldVistor extends FlakyTrackerBaseVistor {
 
         public GlobalFieldVistor(int api) {
             super(api);
@@ -118,16 +116,22 @@ public class FlakyClassTracer extends ClassVisitor {
         }
 
         @Override
-        public void visitCode() {
-            super.visitCode();
-            taintAllGlobal();
+        public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
+            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+            // check if call super()
+            if (opcode == INVOKESPECIAL && name.equals("<init>")) {
+                // must instrument after super()
+                taintAllGlobal();
+            }
         }
 
-        public void taintAllGlobal(){
+        public void taintAllGlobal() {
             for (String[] globalField : globalFields) {
                 String fieldName = globalField[0];
                 String fieldDescriptor = globalField[1];
-                visitFieldInsn(GETFIELD, className, fieldName, fieldDescriptor);
+
+                super.visitVarInsn(ALOAD, 0); // load this reference
+                super.visitFieldInsn(GETFIELD, className, fieldName, fieldDescriptor);
 
                 super.visitTypeInsn(NEW, taintClassLabel);
                 super.visitInsn(DUP);
@@ -208,9 +212,9 @@ public class FlakyClassTracer extends ClassVisitor {
             if (isTestcase) {
                 isTestcase = false;
             }
-            if (!haveClinit){
-                MethodVisitor methodVisitor = cv.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
-                StaticVisitor staticVisitor = (StaticVisitor)methodVisitor;
+            if (!haveClinit) {
+                MethodVisitor methodVisitor = visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
+                StaticVisitor staticVisitor = (StaticVisitor) methodVisitor;
                 staticVisitor.visitCode();
                 // Insert taint code for each static field
                 staticVisitor.taintAllStatic();

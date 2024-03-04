@@ -35,6 +35,11 @@ public class API {
     }
 
     public static boolean isDoubleSlot(String descriptor){
+        if (descriptor.charAt(0)!='(')
+            if (descriptor.charAt(0)!='J' || descriptor.charAt(0)!='D')
+                return true;
+            else
+                return false;
         String assertType = getAssertType(descriptor);
         if (assertType == null)
             return false;
