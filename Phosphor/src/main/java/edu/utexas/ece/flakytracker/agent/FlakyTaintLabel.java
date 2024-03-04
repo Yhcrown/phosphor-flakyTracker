@@ -1,5 +1,8 @@
 package edu.utexas.ece.flakytracker.agent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FlakyTaintLabel {
 
     static final int RANDOM = 1;
@@ -13,6 +16,8 @@ public class FlakyTaintLabel {
     String file;
     int line;
     int label;
+
+    List<String> whiteList = new ArrayList<>();
 
     static int index = 0;
 
@@ -87,6 +92,16 @@ public class FlakyTaintLabel {
                 ", label=" + label +
                 '}';
     }
+
+    public void addWhiteList(String testName){
+        whiteList.add(testName);
+    }
+
+    public boolean isInWhiteList(String testName){
+        return whiteList.contains(testName);
+    }
+
+
 
 
 }

@@ -15,16 +15,30 @@ public class FlakyUtil {
 //        checkTainted(a);
 //    }
 
-    public static <T> void checkTainted( T a, String testName) {
+    public static <T> void checkTainted(T a, String testName) {
         System.out.println("come in");
         Taint taint = MultiTainter.getTaint(a);
         for (Object label : taint.getLabels()) {
             if (label instanceof FlakyTaintLabel) {
                 FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;
-                System.out.println(testName + taintLabel.toString());
+                if (!taintLabel.isInWhiteList(testName))
+                    System.out.println(testName + taintLabel.toString());
             }
         }
         System.out.println(taint);
+    }
+
+
+    public static <T> void addWhiteList(T a, String testName) {
+        Taint taint = MultiTainter.getTaint(a);
+        for (Object label : taint.getLabels()) {
+            if (label instanceof FlakyTaintLabel) {
+                FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;
+                if ("STATIC".equals(taintLabel.getStringType()) || "FIELD".equals(taintLabel.getStringType())){
+                    taintLabel.addWhiteList(testName);
+                }
+            }
+        }
     }
 
 //    public static void main(String[] args) throws IOException {
