@@ -25,25 +25,19 @@ public class API {
     }
 
 
-
-    public static String getAssertType(String descriptor){
+    public static String getAssertType(String descriptor) {
         String[] types = getParamTypes(descriptor);
-        if (types.length > 0){
-            return types[types.length-1];
+        if (types.length > 0) {
+            return types[types.length - 1];
         }
         return null;
     }
 
-    public static boolean isDoubleSlot(String descriptor){
-        if (descriptor.charAt(0)!='(')
-            if (descriptor.charAt(0)!='J' || descriptor.charAt(0)!='D')
-                return true;
-            else
-                return false;
-        String assertType = getAssertType(descriptor);
-        if (assertType == null)
+
+    public static boolean isDoubleSlot(String asmType) {
+        if (asmType == null)
             return false;
-        if (assertType.equals("double") || assertType.equals("long")){
+        if (asmType.equals("double") || asmType.equals("long")) {
             return true;
         }
         return false;
@@ -54,7 +48,6 @@ public class API {
                 typeName.equals("byte") || typeName.equals("char") || typeName.equals("float") ||
                 typeName.equals("double") || typeName.equals("boolean");
     }
-
 
 
     public API() {
@@ -84,49 +77,112 @@ public class API {
         this.returnType = returnType;
     }
 
-    public String getDescriptor(){
+    public String getDescriptor() {
         return descriptor;
     }
 
+
+    public static String getType(String asmType) {
+        int index = 0;
+        StringBuilder type = new StringBuilder();
+        // 如果遇到了数组类型
+        while (asmType.charAt(index) == '[') {
+            type.append("[]");
+            index++;
+        }
+        // 根据类型字符添加类型
+        switch (asmType.charAt(index)) {
+            case 'B':
+                type.insert(0, "byte");
+                break;
+            case 'C':
+                type.insert(0, "char");
+                break;
+            case 'D':
+                type.insert(0, "double");
+                break;
+            case 'F':
+                type.insert(0, "float");
+                break;
+            case 'I':
+                type.insert(0, "int");
+                break;
+            case 'J':
+                type.insert(0, "long");
+                break;
+            case 'S':
+                type.insert(0, "short");
+                break;
+            case 'Z':
+                type.insert(0, "boolean");
+                break;
+            case 'L':
+                // 对象类型，直到遇到';'
+                index++; // 跳过'L'
+                while (asmType.charAt(index) != ';') {
+                    type.append(asmType.charAt(index));
+                    index++;
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown type: " + asmType);
+        }
+        return type.toString();
+
+    }
 
     public static String[] getParamTypes(String descriptor) {
         // 用于存储参数类型的列表
         List<String> paramTypes = new ArrayList<>();
         // 记录当前解析的位置
-        int index = 0;
-        // 跳过'('
-        index++;
+        int index = descriptor.indexOf('(') + 1;
+
         // 循环解析参数类型
-        while(descriptor.charAt(index) != ')') {
+        while (descriptor.charAt(index) != ')' || !(index < descriptor.length())) {
             StringBuilder type = new StringBuilder();
             // 如果遇到了数组类型
-            while(descriptor.charAt(index) == '[') {
+            while (descriptor.charAt(index) == '[') {
                 type.append("[]");
                 index++;
             }
             // 根据类型字符添加类型
-            switch(descriptor.charAt(index)) {
-                case 'B': type.insert(0, "byte"); break;
-                case 'C': type.insert(0, "char"); break;
-                case 'D': type.insert(0, "double"); break;
-                case 'F': type.insert(0, "float"); break;
-                case 'I': type.insert(0, "int"); break;
-                case 'J': type.insert(0, "long"); break;
-                case 'S': type.insert(0, "short"); break;
-                case 'Z': type.insert(0, "boolean"); break;
+            switch (descriptor.charAt(index)) {
+                case 'B':
+                    type.insert(0, "byte");
+                    break;
+                case 'C':
+                    type.insert(0, "char");
+                    break;
+                case 'D':
+                    type.insert(0, "double");
+                    break;
+                case 'F':
+                    type.insert(0, "float");
+                    break;
+                case 'I':
+                    type.insert(0, "int");
+                    break;
+                case 'J':
+                    type.insert(0, "long");
+                    break;
+                case 'S':
+                    type.insert(0, "short");
+                    break;
+                case 'Z':
+                    type.insert(0, "boolean");
+                    break;
                 case 'L':
                     // 对象类型，直到遇到';'
                     index++; // 跳过'L'
-                    while(descriptor.charAt(index) != ';') {
-                        if(descriptor.charAt(index) == '/') {
-                            type.append(".");
-                        } else {
-                            type.append(descriptor.charAt(index));
-                        }
+                    while (descriptor.charAt(index) != ';') {
+
+                        type.append(descriptor.charAt(index));
+
                         index++;
                     }
                     break;
-                default: throw new IllegalArgumentException("Unknown type: " + descriptor.charAt(index));
+                default:
+                    throw new IllegalArgumentException("Unknown type: " + descriptor.charAt(index));
             }
             index++; // 移动到下一个类型符号
             paramTypes.add(type.toString());
@@ -135,31 +191,49 @@ public class API {
         return paramTypes.toArray(new String[0]);
     }
 
-    public static String getReturnType(String descriptor){
-        int index = descriptor.indexOf(')') +1;
+    public static String getReturnType(String descriptor) {
+        int index = descriptor.indexOf(')') + 1;
         String returnType = "";
         StringBuilder type = new StringBuilder();
         // 如果遇到了数组类型
-        while(descriptor.charAt(index) == '[') {
+        while (descriptor.charAt(index) == '[') {
             type.append("[]");
             index++;
         }
         // 根据类型字符添加类型
-        switch(descriptor.charAt(index)) {
-            case 'B': type.insert(0, "byte"); break;
-            case 'C': type.insert(0, "char"); break;
-            case 'D': type.insert(0, "double"); break;
-            case 'F': type.insert(0, "float"); break;
-            case 'I': type.insert(0, "int"); break;
-            case 'J': type.insert(0, "long"); break;
-            case 'S': type.insert(0, "short"); break;
-            case 'Z': type.insert(0, "boolean"); break;
-            case 'V': type.insert(0, "void"); break;
+        switch (descriptor.charAt(index)) {
+            case 'B':
+                type.insert(0, "byte");
+                break;
+            case 'C':
+                type.insert(0, "char");
+                break;
+            case 'D':
+                type.insert(0, "double");
+                break;
+            case 'F':
+                type.insert(0, "float");
+                break;
+            case 'I':
+                type.insert(0, "int");
+                break;
+            case 'J':
+                type.insert(0, "long");
+                break;
+            case 'S':
+                type.insert(0, "short");
+                break;
+            case 'Z':
+                type.insert(0, "boolean");
+                break;
+            case 'V':
+                type.insert(0, "void");
+                break;
             case 'L':
                 // 对象类型，直到遇到';'
                 index++; // 跳过'L'
-                while(descriptor.charAt(index) != ';') {
-                    if(descriptor.charAt(index) == '/') {
+                while (descriptor.charAt(index) != ';') {
+                    if (descriptor.charAt(index) == '/') {
                         type.append(".");
                     } else {
                         type.append(descriptor.charAt(index));
@@ -167,9 +241,20 @@ public class API {
                     index++;
                 }
                 break;
-            default: throw new IllegalArgumentException("Unknown type: " + descriptor.charAt(index));
+            default:
+                throw new IllegalArgumentException("Unknown type: " + descriptor.charAt(index));
         }
         return type.toString();
 
     }
+
+
+    public static String processClassType(String descriptor) {
+        if (descriptor.charAt(0) == 'L') {
+            return descriptor.substring(1, descriptor.length() - 1);
+        }
+        return descriptor;
+    }
+
+
 }

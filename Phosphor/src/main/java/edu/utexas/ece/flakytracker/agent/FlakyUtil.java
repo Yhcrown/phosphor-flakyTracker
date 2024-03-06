@@ -11,9 +11,7 @@ import java.io.IOException;
 
 public class FlakyUtil {
 
-//    public static <T> void checkTainted$$PHOSPHORTAGGED(T a, Taint t){
-//        checkTainted(a);
-//    }
+
 
     public static <T> void checkTainted(T a, String testName) {
         System.out.println("come in");
@@ -22,14 +20,15 @@ public class FlakyUtil {
             if (label instanceof FlakyTaintLabel) {
                 FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;
                 if (!taintLabel.isInWhiteList(testName))
-                    System.out.println(testName + taintLabel.toString());
+                    System.out.println(testName + " may be flaky:"+ taintLabel.toString());
             }
         }
-        System.out.println(taint);
+//        System.out.println(taint);
     }
 
 
     public static <T> void addWhiteList(T a, String testName) {
+        System.out.println("come in white");
         Taint taint = MultiTainter.getTaint(a);
         for (Object label : taint.getLabels()) {
             if (label instanceof FlakyTaintLabel) {

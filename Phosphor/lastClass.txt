@@ -6,23 +6,67 @@ public class edu/utexas/ece/flakytracker/FlakyTrackerTest implements edu/columbi
   @Ledu/columbia/cs/psl/phosphor/runtime/TaintInstrumented;() // invisible
   // compiled from: FlakyTrackerTest.java
 
+  // access flags 0x0
+  I a
+
   // access flags 0x1
   public <init>(Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
    L0
    L1
    L2
-    LINENUMBER 14 L2
+    LINENUMBER 15 L2
     ALOAD 0
     ALOAD 1
     POP
     INVOKESPECIAL java/lang/Object.<init> ()V
-    RETURN
    L3
-    LOCALVARIABLE this$$PHOSPHORTAGGED Ledu/columbia/cs/psl/phosphor/runtime/Taint; L0 L3 1
-    LOCALVARIABLE this Ledu/utexas/ece/flakytracker/FlakyTrackerTest; L0 L3 0
+    LINENUMBER 17 L3
+    ALOAD 0
+    ALOAD 1
+    ICONST_1
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    DUP2_X2
+    POP2
+    POP
+    DUP_X2
+    SWAP
+    PUTFIELD edu/utexas/ece/flakytracker/FlakyTrackerTest.aPHOSPHOR_TAG : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    PUTFIELD edu/utexas/ece/flakytracker/FlakyTrackerTest.a : I
+    RETURN
    L4
-    MAXSTACK = 101
+    LOCALVARIABLE this$$PHOSPHORTAGGED Ledu/columbia/cs/psl/phosphor/runtime/Taint; L0 L4 1
+    LOCALVARIABLE this Ledu/utexas/ece/flakytracker/FlakyTrackerTest; L0 L4 0
+   L5
+    MAXSTACK = 102
     MAXLOCALS = 2
 
   // access flags 0x1
   public test01$$PHOSPHORTAGGED(Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
+  @Lorg/junit/Test;()
+   L0
+   L1
+   L2
+    LINENUMBER 21 L2
+    ALOAD 0
+    ALOAD 1
+    ICONST_2
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    DUP2_X2
+    POP2
+    POP
+    DUP_X2
+    SWAP
+    PUTFIELD edu/utexas/ece/flakytracker/FlakyTrackerTest.aPHOSPHOR_TAG : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    PUTFIELD edu/utexas/ece/flakytracker/FlakyTrackerTest.a : I
+   L3
+    LINENUMBER 22 L3
+    RETURN
+   L4
+    LOCALVARIABLE this$$PHOSPHORTAGGED Ledu/columbia/cs/psl/phosphor/runtime/Taint; L0 L4 1
+    LOCALVARIABLE this Ledu/utexas/ece/flakytracker/FlakyTrackerTest; L0 L4 0
+   L5
+    MAXSTACK = 102
+    MAXLOCALS = 2
+
+  // access flags 0x1
+  public test02$$PHOSPHORTAGGED(Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V

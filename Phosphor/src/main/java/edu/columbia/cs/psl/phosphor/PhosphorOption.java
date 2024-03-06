@@ -135,6 +135,7 @@ public enum PhosphorOption {
                     @SuppressWarnings("unchecked")
                     Class<? extends ClassVisitor> clazz = (Class<? extends ClassVisitor>) commandLine.getParsedOptionValue(optionName);
                     Configuration.PRIOR_CLASS_VISITOR = clazz;
+                    System.out.println(clazz);
                 } catch(ParseException e) {
                     System.err.println("Failed to create specified prior class visitor: " + optionName);
                 }

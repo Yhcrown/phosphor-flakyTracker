@@ -25,17 +25,17 @@ public class FlakyClassTracer extends ClassVisitor {
 
     public static String addWhiteListFunction = "addWhiteList";
 
-    static int lineNumber;
+    int lineNumber;
 
-    static String currentTestName;
+    String currentTestName;
 
-    static String className;
+    String className;
 
-    static boolean haveClinit = false;
+    boolean haveClinit = false;
 
-    static List<String[]> globalFields;
+    List<String[]> globalFields = new ArrayList<>();
 
-    static List<String[]> staticVaribles;
+    List<String[]> staticVaribles = new ArrayList<>();
 
     static int labelIndex = 0;
 
@@ -46,7 +46,6 @@ public class FlakyClassTracer extends ClassVisitor {
     static {
         nonDeterministicAPI = new ArrayList<>();
         trackAPI = new ArrayList<>();
-        globalFields = new ArrayList<>();
 
 
         API nextInt = new API("java/util/Random", "nextInt", "()I");
@@ -68,6 +67,23 @@ public class FlakyClassTracer extends ClassVisitor {
     }
 
     @Override
+    public void visitEnd() {
+
+//        if (!haveClinit) {
+//            MethodVisitor methodVisitor = visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
+//            StaticVisitor staticVisitor = (StaticVisitor) methodVisitor;
+//            staticVisitor.visitCode();
+//            // Insert taint code for each static field
+//            staticVisitor.taintAllStatic();
+//
+//            staticVisitor.visitInsn(Opcodes.RETURN);
+//            staticVisitor.visitMaxs(-1, -1); // Auto-computed
+//            staticVisitor.visitEnd();
+//        }
+        super.visitEnd();
+    }
+
+    @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
         if (mv != null && !"<init>".equals(name) && !"<clinit>".equals(name)) {
@@ -81,7 +97,7 @@ public class FlakyClassTracer extends ClassVisitor {
             mv = new StaticVisitor(api, mv);
             haveClinit = true;
         } else if ("<init>".equals(name)) {
-            mv = new GlobalFieldVistor(api, mv);
+//            mv = new GlobalFieldVistor(api, mv);
         }
         return mv;
     }
@@ -164,24 +180,52 @@ public class FlakyClassTracer extends ClassVisitor {
             super.visitEnd();
         }
 
-        public void taintAllStatic() {
-            for (String[] staticVarible : staticVaribles) {
-                String fieldName = staticVarible[0];
-                String fieldDescriptor = staticVarible[1];
-                visitFieldInsn(GETSTATIC, className, fieldName, fieldDescriptor);
+//        public void taintAllStatic() {
+//            for (String[] staticVarible : staticVaribles) {
+//                String fieldName = staticVarible[0];
+//                String fieldDescriptor = staticVarible[1];
+//                super.visitFieldInsn(GETSTATIC, className, fieldName, fieldDescriptor);
+//
+//                super.visitTypeInsn(NEW, taintClassLabel);
+//                super.visitInsn(DUP);
+//
+//                super.visitLdcInsn(FlakyTaintLabel.STATIC);
+//
+//                super.visitLdcInsn(fieldName);
+//                super.visitLdcInsn(className);
+//                super.visitLdcInsn(lineNumber);
+//                super.visitLdcInsn(getLabelIndex()); //label
+//                super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+//
+//                callTaintedMethod(fieldDescriptor);
+//            }
+
+        @Override
+        public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
+
+
+            super.visitFieldInsn(opcode, owner, name, descriptor);
+
+
+            if (opcode == PUTSTATIC) {
+                super.visitFieldInsn(GETSTATIC, owner, name, descriptor);
 
                 super.visitTypeInsn(NEW, taintClassLabel);
                 super.visitInsn(DUP);
-
                 super.visitLdcInsn(FlakyTaintLabel.STATIC);
-
-                super.visitLdcInsn(fieldName);
+                super.visitLdcInsn(name);
                 super.visitLdcInsn(className);
-                super.visitLdcInsn(lineNumber);
+                super.visitLdcInsn(-1);
                 super.visitLdcInsn(getLabelIndex()); //label
                 super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+                callTaintedMethod(descriptor);
 
-                callTaintedMethod(fieldDescriptor);
+
+                String type = API.getType(descriptor);
+                if (!API.isPrimitiveType(type))
+                    super.visitTypeInsn(CHECKCAST, API.processClassType(descriptor));
+
+                super.visitFieldInsn(opcode, owner, name, descriptor);
 
             }
 
@@ -212,17 +256,7 @@ public class FlakyClassTracer extends ClassVisitor {
             if (isTestcase) {
                 isTestcase = false;
             }
-            if (!haveClinit) {
-                MethodVisitor methodVisitor = visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
-                StaticVisitor staticVisitor = (StaticVisitor) methodVisitor;
-                staticVisitor.visitCode();
-                // Insert taint code for each static field
-                staticVisitor.taintAllStatic();
 
-                staticVisitor.visitInsn(Opcodes.RETURN);
-                staticVisitor.visitMaxs(-1, -1); // Auto-computed
-                staticVisitor.visitEnd();
-            }
 
             super.visitEnd();
         }
@@ -237,25 +271,42 @@ public class FlakyClassTracer extends ClassVisitor {
         public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
 
 
-            if (opcode == GETFIELD) {
-                if (className.equals(owner)) {
-                    if (API.isDoubleSlot(descriptor))
-                        super.visitInsn(DUP2);
-                    else
-                        super.visitInsn(DUP);
-                    super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, addWhiteListFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
-                }
-            }
-
-            if (opcode == GETSTATIC) {
-                if (API.isDoubleSlot(descriptor))
-                    super.visitInsn(DUP2);
-                else
-                    super.visitInsn(DUP);
-                super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, addWhiteListFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
-            }
-
             super.visitFieldInsn(opcode, owner, name, descriptor);
+
+
+            if (opcode == PUTSTATIC) {
+                super.visitFieldInsn(GETSTATIC, owner, name, descriptor);
+
+                super.visitTypeInsn(NEW, taintClassLabel);
+                super.visitInsn(DUP);
+                super.visitLdcInsn(FlakyTaintLabel.STATIC);
+                super.visitLdcInsn(name);
+                super.visitLdcInsn(className);
+                super.visitLdcInsn(lineNumber);
+                super.visitLdcInsn(getLabelIndex()); //label
+                super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+                callTaintedMethod(descriptor);
+
+
+                String type = API.getType(descriptor);
+                if (!API.isPrimitiveType(type))
+                    super.visitTypeInsn(CHECKCAST, API.processClassType(descriptor));
+
+                super.visitFieldInsn(opcode, owner, name, descriptor);
+
+                //add whiteList
+
+                super.visitFieldInsn(GETSTATIC, owner, name, descriptor);
+
+
+                if (API.isPrimitiveType(type))
+                    callBoxingMethod(type);
+
+                super.visitLdcInsn(currentTestName);
+
+                super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, addWhiteListFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
+
+            }
         }
 
         @Override
@@ -263,13 +314,14 @@ public class FlakyClassTracer extends ClassVisitor {
             for (API api : trackAPI) {
                 if (opcode == INVOKESTATIC && api.getOwner().equals(owner) && api.getName().equals(name)) {
 
-                    if (API.isDoubleSlot(descriptor)) {
+                    String assertType = API.getAssertType(descriptor);
+
+                    if (API.isDoubleSlot(assertType)) {
                         super.visitInsn(Opcodes.DUP2_X2);
                     } else {
                         super.visitInsn(DUP_X1);
                     }
 
-                    String assertType = API.getAssertType(descriptor);
                     if (API.isPrimitiveType(assertType))
                         callBoxingMethod(assertType);
 
@@ -287,7 +339,7 @@ public class FlakyClassTracer extends ClassVisitor {
 
                     super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
 
-                    if (API.isDoubleSlot(descriptor)) {
+                    if (API.isDoubleSlot(assertType)) {
                         super.visitInsn(DUP2_X2);
                     } else {
                         super.visitInsn(DUP_X1);

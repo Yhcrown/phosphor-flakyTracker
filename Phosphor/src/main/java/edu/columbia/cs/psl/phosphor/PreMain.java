@@ -52,6 +52,7 @@ public class PreMain {
 
 
         inst.addTransformer(new ClassSupertypeReadingTransformer());
+        inst.addTransformer(new FlakyTrackerTransformer());
 
         RUNTIME_INST = true;
         if(args != null) {
