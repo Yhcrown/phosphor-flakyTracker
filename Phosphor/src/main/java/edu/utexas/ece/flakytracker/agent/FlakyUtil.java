@@ -14,7 +14,7 @@ public class FlakyUtil {
 
 
     public static <T> void checkTainted(T a, String testName) {
-        System.out.println("come in");
+        System.out.println("come in "+testName);
         Taint taint = MultiTainter.getTaint(a);
         for (Object label : taint.getLabels()) {
             if (label instanceof FlakyTaintLabel) {
@@ -28,7 +28,7 @@ public class FlakyUtil {
 
 
     public static <T> void addWhiteList(T a, String testName) {
-        System.out.println("come in white");
+//        System.out.println("come in white");
         Taint taint = MultiTainter.getTaint(a);
         for (Object label : taint.getLabels()) {
             if (label instanceof FlakyTaintLabel) {

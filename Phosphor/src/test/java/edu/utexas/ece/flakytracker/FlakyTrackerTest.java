@@ -41,23 +41,23 @@ public class FlakyTrackerTest {
     @Test
     public void test() throws IOException {
 //        API.getParamTypes("Ljava/io/PrintStream;");
-//        String className = "edu.utexas.ece.flakytracker.FlakyTrackerTest";
-//        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
-//        boolean asmCode = true;
-//
-//        //        Printer printer = asmCode ? new ASMifier() : new Textifier();
-//        //        PrintWriter printWriter = new PrintWriter(System.out, true);
-//        //        TraceClassVisitor traceClassVisitor = new TraceClassVisitor(null, printer, printWriter);
-//        //        new ClassReader(className).accept(traceClassVisitor, parsingOptions);
-//
-//        ClassReader reader = new ClassReader(className);
-//
-//        //        final ClassReader reader = new ClassReader(bytes);
-//        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
-//        FlakyClassTracer visitor = new FlakyClassTracer(writer);
-//        reader.accept(visitor, 0);
-//
-//        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
+        String className = "edu.utexas.ece.flakytracker.FlakyTrackerTest";
+        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
+        boolean asmCode = true;
+
+        //        Printer printer = asmCode ? new ASMifier() : new Textifier();
+        //        PrintWriter printWriter = new PrintWriter(System.out, true);
+        //        TraceClassVisitor traceClassVisitor = new TraceClassVisitor(null, printer, printWriter);
+        //        new ClassReader(className).accept(traceClassVisitor, parsingOptions);
+
+        ClassReader reader = new ClassReader(className);
+
+        //        final ClassReader reader = new ClassReader(bytes);
+        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
+        FlakyClassTracer visitor = new FlakyClassTracer(writer);
+        reader.accept(visitor, 0);
+
+        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
 
 //////         System.out.println
     }
