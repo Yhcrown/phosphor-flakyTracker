@@ -8,7 +8,7 @@ import edu.columbia.cs.psl.phosphor.runtime.MultiTainter;
 import edu.columbia.cs.psl.phosphor.runtime.Taint;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-
+import com.github.javafaker.*;
 import java.io.File;
 import java.io.IOException;
 // import flaky.FlakyUtil;
@@ -20,36 +20,40 @@ public class FlakyTest {
     public static boolean debug = false;
 
     @Test
-    public void test021() throws Throwable {
+    public void test031_1() throws Throwable {
         if (debug)
-            System.out.format("%n%s%n", "TestGroup100Case0.test021");
+            System.out.format("%n%s%n", "TestGroup100Case0.test031");
         java.util.Random random0 = null;
         com.github.javafaker.Faker faker1 = new com.github.javafaker.Faker(random0);
-        com.github.javafaker.Photography photography2 = faker1.photography();
-        java.lang.String str3 = photography2.brand();
-        // FlakyUtil.checkTainted(str3);
-        System.out.println(MultiTainter.getTaint(str3));
-        // org.junit.Assert.assertNotNull(photography2);
-        org.junit.Assert.assertEquals("'" + str3 + "' != '" + "Tokina" + "'", str3, "Tokina"); //flaky
+        com.github.javafaker.Avatar avatar2 = faker1.avatar();
+        com.github.javafaker.SlackEmoji slackEmoji3 = faker1.slackEmoji();
+        com.github.javafaker.Medical medical4 = faker1.medical();
+        com.github.javafaker.University university6 = faker1.university();
+        java.lang.String str7 = university6.prefix();
+        org.junit.Assert.assertNotNull(avatar2);
+        org.junit.Assert.assertNotNull(slackEmoji3);
+        org.junit.Assert.assertNotNull(medical4);
+        org.junit.Assert.assertNotNull(university6);
+        org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Eastern" + "'", str7, "Eastern");
     }
 
     @Test
     public void test045() throws Throwable {
-        if (debug)
-            System.out.format("%n%s%n", "TestGroup100Case0.test045");
-        java.util.Random random0 = null;
-        com.github.javafaker.Faker faker1 = new com.github.javafaker.Faker(random0);
-        com.github.javafaker.Photography photography2 = faker1.photography();
-        com.github.javafaker.IdNumber idNumber3 = faker1.idNumber();
-        com.github.javafaker.App app4 = faker1.app();
-        com.github.javafaker.Hacker hacker5 = faker1.hacker();
-        java.lang.String str7 = faker1.letterify("Mr Peanutbutter");
-        org.junit.Assert.assertNotNull(photography2);
-        org.junit.Assert.assertNotNull(idNumber3);
-        org.junit.Assert.assertNotNull(app4);
-        org.junit.Assert.assertNotNull(hacker5);
-        // System.out.println(MultiTainter.getTaint(str7));
-        org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Mr Peanutbutter" + "'", str7, "Mr Peanutbutter");
+//        if (debug)
+//            System.out.format("%n%s%n", "TestGroup100Case0.test045");
+//        java.util.Random random0 = null;
+//        com.github.javafaker.Faker faker1 = new com.github.javafaker.Faker(random0);
+//        com.github.javafaker.Photography photography2 = faker1.photography();
+//        com.github.javafaker.IdNumber idNumber3 = faker1.idNumber();
+//        com.github.javafaker.App app4 = faker1.app();
+//        com.github.javafaker.Hacker hacker5 = faker1.hacker();
+//        java.lang.String str7 = faker1.letterify("Mr Peanutbutter");
+//        org.junit.Assert.assertNotNull(photography2);
+//        org.junit.Assert.assertNotNull(idNumber3);
+//        org.junit.Assert.assertNotNull(app4);
+//        org.junit.Assert.assertNotNull(hacker5);
+//        // System.out.println(MultiTainter.getTaint(str7));
+//        org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Mr Peanutbutter" + "'", str7, "Mr Peanutbutter");
     }
 
 //    @Test
