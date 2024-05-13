@@ -16,6 +16,8 @@ public class FlakyClassTracer extends ClassVisitor {
 
     public static List<API> trackAPI;
 
+    public static List<API> nonDeterministicClass;
+
 
     public static String trackerProxyClass = "edu/utexas/ece/flakytracker/agent/FlakyUtil";
 
@@ -46,11 +48,15 @@ public class FlakyClassTracer extends ClassVisitor {
     static {
         nonDeterministicAPI = new ArrayList<>();
         trackAPI = new ArrayList<>();
-
+        nonDeterministicClass = new ArrayList<>();
 
         API nextInt = new API("java/util/Random", "nextInt", "()I");
+        API nextIntI = new API("java/util/Random", "nextInt", "(I)I");
         // API nextLong = new API("java/util/Random", "nextLong", "()L");
-        nonDeterministicAPI.addAll(Arrays.asList(nextInt));
+        nonDeterministicAPI.addAll(Arrays.asList(nextInt, nextIntI));
+
+        API RandomClass = new API("java/util/Random", "", "");
+        nonDeterministicClass.add(RandomClass);
         API assertEquals = new API("org/junit/Assert", "assertEquals", "()V");
         new API("org/junit/Assert", "assertNotEquals", "()V");
         trackAPI.addAll(Arrays.asList(assertEquals));
@@ -121,49 +127,49 @@ public class FlakyClassTracer extends ClassVisitor {
     }
 
 
-    private class GlobalFieldVistor extends FlakyTrackerBaseVistor {
-
-        public GlobalFieldVistor(int api) {
-            super(api);
-        }
-
-        public GlobalFieldVistor(int api, MethodVisitor methodVisitor) {
-            super(api, methodVisitor);
-        }
-
-        @Override
-        public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
-            // check if call super()
-            if (opcode == INVOKESPECIAL && name.equals("<init>")) {
-                // must instrument after super()
-                taintAllGlobal();
-            }
-        }
-
-        public void taintAllGlobal() {
-            for (String[] globalField : globalFields) {
-                String fieldName = globalField[0];
-                String fieldDescriptor = globalField[1];
-
-                super.visitVarInsn(ALOAD, 0); // load this reference
-                super.visitFieldInsn(GETFIELD, className, fieldName, fieldDescriptor);
-
-                super.visitTypeInsn(NEW, taintClassLabel);
-                super.visitInsn(DUP);
-
-                super.visitLdcInsn(FlakyTaintLabel.FIELD);
-
-                super.visitLdcInsn(fieldName);
-                super.visitLdcInsn(className);
-                super.visitLdcInsn(lineNumber);
-                super.visitLdcInsn(getLabelIndex()); //label
-                super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
-
-                callTaintedMethod(fieldDescriptor);
-            }
-        }
-    }
+//    private class GlobalFieldVistor extends FlakyTrackerBaseVistor {
+//
+//        public GlobalFieldVistor(int api) {
+//            super(api);
+//        }
+//
+//        public GlobalFieldVistor(int api, MethodVisitor methodVisitor) {
+//            super(api, methodVisitor);
+//        }
+//
+//        @Override
+//        public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
+//            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+//            // check if call super()
+//            if (opcode == INVOKESPECIAL && name.equals("<init>")) {
+//                // must instrument after super()
+//                taintAllGlobal();
+//            }
+//        }
+//
+//        public void taintAllGlobal() {
+//            for (String[] globalField : globalFields) {
+//                String fieldName = globalField[0];
+//                String fieldDescriptor = globalField[1];
+//
+//                super.visitVarInsn(ALOAD, 0); // load this reference
+//                super.visitFieldInsn(GETFIELD, className, fieldName, fieldDescriptor);
+//
+//                super.visitTypeInsn(NEW, taintClassLabel);
+//                super.visitInsn(DUP);
+//
+//                super.visitLdcInsn(FlakyTaintLabel.FIELD);
+//
+//                super.visitLdcInsn(fieldName);
+//                super.visitLdcInsn(className);
+//                super.visitLdcInsn(lineNumber);
+//                super.visitLdcInsn(getLabelIndex()); //label
+//                super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+//
+//                callTaintedMethod(fieldDescriptor);
+//            }
+//        }
+//    }
 
     private class StaticVisitor extends FlakyTrackerBaseVistor {
 
@@ -180,25 +186,26 @@ public class FlakyClassTracer extends ClassVisitor {
             super.visitEnd();
         }
 
-//        public void taintAllStatic() {
-//            for (String[] staticVarible : staticVaribles) {
-//                String fieldName = staticVarible[0];
-//                String fieldDescriptor = staticVarible[1];
-//                super.visitFieldInsn(GETSTATIC, className, fieldName, fieldDescriptor);
-//
-//                super.visitTypeInsn(NEW, taintClassLabel);
-//                super.visitInsn(DUP);
-//
-//                super.visitLdcInsn(FlakyTaintLabel.STATIC);
-//
-//                super.visitLdcInsn(fieldName);
-//                super.visitLdcInsn(className);
-//                super.visitLdcInsn(lineNumber);
-//                super.visitLdcInsn(getLabelIndex()); //label
-//                super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
-//
-//                callTaintedMethod(fieldDescriptor);
-//            }
+        public void taintAllStatic() {
+            for (String[] staticVarible : staticVaribles) {
+                String fieldName = staticVarible[0];
+                String fieldDescriptor = staticVarible[1];
+                super.visitFieldInsn(GETSTATIC, className, fieldName, fieldDescriptor);
+
+                super.visitTypeInsn(NEW, taintClassLabel);
+                super.visitInsn(DUP);
+
+                super.visitLdcInsn(FlakyTaintLabel.STATIC);
+
+                super.visitLdcInsn(fieldName);
+                super.visitLdcInsn(className);
+                super.visitLdcInsn(lineNumber);
+                super.visitLdcInsn(getLabelIndex()); //label
+                super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+
+                callTaintedMethod(fieldDescriptor);
+            }
+        }
 
         @Override
         public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
@@ -224,6 +231,25 @@ public class FlakyClassTracer extends ClassVisitor {
                 String type = API.getType(descriptor);
                 if (!API.isPrimitiveType(type))
                     super.visitTypeInsn(CHECKCAST, API.processClassType(descriptor));
+
+                for (API clazz : nonDeterministicClass) {
+                    if (("L"+clazz.getOwner()+";").equals(descriptor) ) {
+                        super.visitTypeInsn(NEW, taintClassLabel);
+                        super.visitInsn(DUP);
+                        super.visitLdcInsn(FlakyTaintLabel.RANDOM);
+                        super.visitLdcInsn(owner + "." + name);
+                        super.visitLdcInsn(className);
+                        super.visitLdcInsn(lineNumber);
+                        super.visitLdcInsn(getLabelIndex()); //label
+                        super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, tainterClass, "taintedReference", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
+
+                        super.visitTypeInsn(CHECKCAST, clazz.getOwner());
+                    }
+
+
+                }
+
 
                 super.visitFieldInsn(opcode, owner, name, descriptor);
 
@@ -357,10 +383,24 @@ public class FlakyClassTracer extends ClassVisitor {
 
             super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
 
-            for (API api : nonDeterministicAPI) {
-                if (opcode == INVOKEVIRTUAL && api.getOwner().equals(owner) && api.getName().equals(name) && api.getDescriptor().equals(descriptor)) {
+//            for (API api : nonDeterministicAPI) {
+//                if (opcode == INVOKEVIRTUAL && api.getOwner().equals(owner) && api.getName().equals(name) && api.getDescriptor().equals(descriptor)) {
+//
+//
+//                    super.visitTypeInsn(NEW, taintClassLabel);
+//                    super.visitInsn(DUP);
+//                    super.visitLdcInsn(FlakyTaintLabel.RANDOM);
+//                    super.visitLdcInsn(owner + "." + name);
+//                    super.visitLdcInsn(className);
+//                    super.visitLdcInsn(lineNumber);
+//                    super.visitLdcInsn(getLabelIndex()); //label
+//                    super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+//                    callTaintedMethod(descriptor);
+//                }
+//            }
 
-
+            for (API clazz : nonDeterministicClass) {
+                if (opcode == INVOKESPECIAL && clazz.getOwner().equals(owner) && "<init>".equals(name)) {
                     super.visitTypeInsn(NEW, taintClassLabel);
                     super.visitInsn(DUP);
                     super.visitLdcInsn(FlakyTaintLabel.RANDOM);
@@ -369,8 +409,12 @@ public class FlakyClassTracer extends ClassVisitor {
                     super.visitLdcInsn(lineNumber);
                     super.visitLdcInsn(getLabelIndex()); //label
                     super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
-                    callTaintedMethod(descriptor);
+                    super.visitMethodInsn(Opcodes.INVOKESTATIC, tainterClass, "taintedReference", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
+
+                    super.visitTypeInsn(CHECKCAST, clazz.getOwner());
                 }
+
+
             }
 
 

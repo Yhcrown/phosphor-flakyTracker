@@ -17,6 +17,8 @@ public class FlakyTrackerBaseVistor extends MethodVisitor {
     }
 
     public void callTaintedMethod(String oriDescriptor) {
+
+
         String returnType = API.getReturnType(oriDescriptor);
         String descriptor;
         String methodName;
