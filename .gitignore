@@ -23,6 +23,7 @@ dependency-reduced-pom.xml
 
 # Package files
 *.jar
+!**/target/Phosphor-0.0.5-SNAPSHOT.jar
 *.war
 *.ear
 
