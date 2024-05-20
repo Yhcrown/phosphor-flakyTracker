@@ -48,7 +48,35 @@ public class FlakyTrackerTest {
         org.junit.Assert.assertEquals("not equal", x, 3); //random
     }
 
+    @Test
 
+    public void test071() throws Throwable {
+
+        java.util.Locale locale0 = null;
+
+        java.util.Random random1 = null;
+
+        com.github.javafaker.service.RandomService randomService2 = new com.github.javafaker.service.RandomService(random1);
+
+        long long4 = randomService2.nextLong((long) 'a');
+
+        // The following exception was thrown during execution in test generation
+
+        try {
+
+//            com.github.javafaker.Faker faker5 = new com.github.javafaker.Faker(locale0, randomService2);
+
+            org.junit.Assert.fail("Expected exception of type java.lang.IllegalArgumentException; message: locale is required");
+
+        } catch (java.lang.IllegalArgumentException e) {
+
+            // Expected exception.
+
+        }
+
+// flaky:         org.junit.Assert.assertTrue("'" + long4 + "' != '" + 62L + "'", long4 == 62L);
+
+    }
 
 
     @Test

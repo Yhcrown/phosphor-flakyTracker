@@ -27,10 +27,12 @@ public class API {
 
     public static String getAssertType(String descriptor) {
         String[] types = getParamTypes(descriptor);
-        if (types.length > 0) {
-            return types[types.length - 1];
-        }
-        return null;
+        if (types.length >2 && types[0].equals("java/lang/String")) {
+            return types[types.length - 2];
+        }else if (types.length == 1)
+            return types[0];
+        else
+            return types[1];
     }
 
 

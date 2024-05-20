@@ -14,16 +14,18 @@ public class FlakyUtil {
 
 
     public static <T> void checkTainted(T a, String testName) {
-        System.out.println("come in "+testName);
+//        System.out.println("come in "+testName);
         Taint taint = MultiTainter.getTaint(a);
         for (Object label : taint.getLabels()) {
             if (label instanceof FlakyTaintLabel) {
                 FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;
                 if (!taintLabel.isInWhiteList(testName))
-                    System.out.println(testName + " may be flaky:"+ taintLabel.toString());
+                    System.out.println(testName + " may be flaky: "+ taintLabel.toString());
             }
         }
-//        System.out.println(taint);
+        if (taint.getLabels().length == 0) {
+            System.out.println(testName + " is not flaky");
+        }
     }
 
 

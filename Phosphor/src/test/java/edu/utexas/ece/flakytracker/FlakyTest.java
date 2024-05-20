@@ -1,4 +1,6 @@
 package edu.utexas.ece.flakytracker;
+import edu.columbia.cs.psl.phosphor.struct.harmony.util.Arrays;
+import edu.utexas.ece.flakytracker.agent.API;
 import edu.utexas.ece.flakytracker.agent.FlakyClassTracer;
 import org.apache.commons.io.FileUtils;
 import org.junit.FixMethodOrder;
@@ -56,28 +58,34 @@ public class FlakyTest {
 //        org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Mr Peanutbutter" + "'", str7, "Mr Peanutbutter");
     }
 
-//    @Test
-//    public void test() throws IOException {
-////        API.getParamTypes("Ljava/io/PrintStream;");
+    @Test
+    public void test() throws IOException {
+//        API.getParamTypes("Ljava/io/PrintStream;");
 //        String className = "edu.utexas.ece.flakytracker.FlakyTest";
-//        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
-//        boolean asmCode = true;
-//
-//        //        Printer printer = asmCode ? new ASMifier() : new Textifier();
-//        //        PrintWriter printWriter = new PrintWriter(System.out, true);
-//        //        TraceClassVisitor traceClassVisitor = new TraceClassVisitor(null, printer, printWriter);
-//        //        new ClassReader(className).accept(traceClassVisitor, parsingOptions);
-//
-//        ClassReader reader = new ClassReader(className);
-//
-//        //        final ClassReader reader = new ClassReader(bytes);
-//        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
-//        FlakyClassTracer visitor = new FlakyClassTracer(writer);
-//        reader.accept(visitor, 0);
-//
-//        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/FlakyTest.class"),writer.toByteArray());
-//
-////////         System.out.println
-//    }
+        String className = "org.junit.Assert";
+        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
+        boolean asmCode = true;
+
+        //        Printer printer = asmCode ? new ASMifier() : new Textifier();
+        //        PrintWriter printWriter = new PrintWriter(System.out, true);
+        //        TraceClassVisitor traceClassVisitor = new TraceClassVisitor(null, printer, printWriter);
+        //        new ClassReader(className).accept(traceClassVisitor, parsingOptions);
+
+        ClassReader reader = new ClassReader(className);
+
+        //        final ClassReader reader = new ClassReader(bytes);
+        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
+        FlakyClassTracer visitor = new FlakyClassTracer(writer);
+        reader.accept(visitor, 0);
+
+        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/FlakyTest.class"),writer.toByteArray());
+
+//////         System.out.println
+    }
+
+    @Test
+    public void APITest(){
+        System.out.println(Arrays.toString(API.getParamTypes("(Ljava/lang/String;JJ)V")));
+    }
 }
 

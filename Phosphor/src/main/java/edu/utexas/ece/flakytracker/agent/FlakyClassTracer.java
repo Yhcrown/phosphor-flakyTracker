@@ -58,8 +58,14 @@ public class FlakyClassTracer extends ClassVisitor {
         API RandomClass = new API("java/util/Random", "", "");
         nonDeterministicClass.add(RandomClass);
         API assertEquals = new API("org/junit/Assert", "assertEquals", "()V");
-        new API("org/junit/Assert", "assertNotEquals", "()V");
-        trackAPI.addAll(Arrays.asList(assertEquals));
+        API assertNotEquals = new API("org/junit/Assert", "assertNotEquals", "()V");
+        API assertNotNull = new API("org/junit/Assert", "", "()V");
+        API assertNull = new API("org/junit/Assert", "assertNull", "()V");
+        API assertSame = new API("org/junit/Assert", "assertSame", "()V");
+        API assertNotSame = new API("org/junit/Assert", "assertNotSame", "()V");
+        API assertThat = new API("org/junit/Assert", "assertThat", "()V");
+
+        trackAPI.addAll(Arrays.asList(assertEquals, assertNotEquals, assertNotNull, assertNull, assertNotEquals, assertSame, assertNotSame, assertThat));
     }
 
     public FlakyClassTracer(ClassVisitor cv) {
@@ -233,7 +239,7 @@ public class FlakyClassTracer extends ClassVisitor {
                     super.visitTypeInsn(CHECKCAST, API.processClassType(descriptor));
 
                 for (API clazz : nonDeterministicClass) {
-                    if (("L"+clazz.getOwner()+";").equals(descriptor) ) {
+                    if (("L" + clazz.getOwner() + ";").equals(descriptor)) {
                         super.visitTypeInsn(NEW, taintClassLabel);
                         super.visitInsn(DUP);
                         super.visitLdcInsn(FlakyTaintLabel.RANDOM);
@@ -337,9 +343,64 @@ public class FlakyClassTracer extends ClassVisitor {
 
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
+            String[] paramTypes = API.getParamTypes(descriptor);
             for (API api : trackAPI) {
                 if (opcode == INVOKESTATIC && api.getOwner().equals(owner) && api.getName().equals(name)) {
+                    if (paramTypes[0].equals("java/lang/String") && paramTypes.length == 3) {   // message, actual, expected
+                        String assertType = API.getAssertType(descriptor);
 
+                        if (API.isDoubleSlot(assertType)) {
+                            super.visitInsn(Opcodes.DUP2_X2);
+                        } else {
+                            super.visitInsn(DUP_X1);
+                        }
+
+                        if (API.isPrimitiveType(assertType))
+                            callBoxingMethod(assertType);
+
+
+                        super.visitLdcInsn(currentTestName);
+
+
+                        // lo11
+                        // lo12
+                        // lo21
+                        // lo22
+                        // lo11
+                        // lo12
+
+
+                        super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
+
+                        if (API.isDoubleSlot(assertType)) {
+                            super.visitInsn(DUP2_X2);
+                        } else {
+                            super.visitInsn(DUP_X1);
+                        }
+
+                        if (API.isPrimitiveType(assertType))
+                            callBoxingMethod(assertType);
+
+                        super.visitLdcInsn(currentTestName);
+
+                        super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
+                    }
+                } else if (paramTypes[0].equals("java/lang/String") && paramTypes.length == 2) { //not null, message
+                    String assertType = API.getAssertType(descriptor);
+
+                    if (API.isDoubleSlot(assertType)) {
+                        super.visitInsn(DUP2_X2);
+                    } else {
+                        super.visitInsn(DUP_X1);
+                    }
+
+                    if (API.isPrimitiveType(assertType))
+                        callBoxingMethod(assertType);
+
+                    super.visitLdcInsn(currentTestName);
+
+                    super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
+                } else if (paramTypes.length == 2) {
                     String assertType = API.getAssertType(descriptor);
 
                     if (API.isDoubleSlot(assertType)) {
@@ -365,18 +426,6 @@ public class FlakyClassTracer extends ClassVisitor {
 
                     super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
 
-                    if (API.isDoubleSlot(assertType)) {
-                        super.visitInsn(DUP2_X2);
-                    } else {
-                        super.visitInsn(DUP_X1);
-                    }
-
-                    if (API.isPrimitiveType(assertType))
-                        callBoxingMethod(assertType);
-
-                    super.visitLdcInsn(currentTestName);
-
-                    super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                 }
             }
 
