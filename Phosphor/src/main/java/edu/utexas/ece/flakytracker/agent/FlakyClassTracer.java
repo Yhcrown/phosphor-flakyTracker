@@ -350,7 +350,7 @@ public class FlakyClassTracer extends ClassVisitor {
             String[] paramTypes = API.getParamTypes(descriptor);
             for (API api : trackAPI) {
                 if (opcode == INVOKESTATIC && api.getOwner().equals(owner) && api.getName().equals(name)) {
-                    if (paramTypes.length == 3 && paramTypes[0].equals("java/lang/String")) {   // message, actual, expected
+                    if (paramTypes.length >= 2) {   // message, actual, expected
                         String assertType = API.getAssertType(descriptor);
 
                         if (API.isDoubleSlot(assertType)) {
@@ -388,40 +388,42 @@ public class FlakyClassTracer extends ClassVisitor {
                         super.visitLdcInsn(currentTestName);
 
                         super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
-                    } else if (paramTypes.length == 2 && paramTypes[0].equals("java/lang/String")) { //not null, message
-                        String assertType = API.getAssertType(descriptor);
-
-                        if (API.isDoubleSlot(assertType)) {
-                            super.visitInsn(DUP2);
-                        } else {
-                            super.visitInsn(DUP);
-                        }
-
-                        if (API.isPrimitiveType(assertType))
-                            callBoxingMethod(assertType);
-
-                        super.visitLdcInsn(currentTestName);
-
-                        super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
-                    } else if (paramTypes.length == 2) { //expected, actual
-                        String assertType = API.getAssertType(descriptor);
-
-                        if (API.isDoubleSlot(assertType)) {
-                            super.visitInsn(DUP2_X2);
-                        } else {
-                            super.visitInsn(DUP_X1);
-                        }
-
-                        if (API.isPrimitiveType(assertType))
-                            callBoxingMethod(assertType);
-
-
-                        super.visitLdcInsn(currentTestName);
-
-
-                        super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
-
-                    } else if (paramTypes.length == 1) {
+                    }
+//                    else if (paramTypes.length == 2 && paramTypes[0].equals("java/lang/String")) { //not null, message
+//                        String assertType = API.getAssertType(descriptor);
+//
+//                        if (API.isDoubleSlot(assertType)) {
+//                            super.visitInsn(DUP2_X2);
+//                        } else {
+//                            super.visitInsn(DUP_X1);
+//                        }
+//
+//                        if (API.isPrimitiveType(assertType))
+//                            callBoxingMethod(assertType);
+//
+//                        super.visitLdcInsn(currentTestName);
+//
+//                        super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
+//                    } else if (paramTypes.length == 2) { //expected, actual
+//                        String assertType = API.getAssertType(descriptor);
+//
+//                        if (API.isDoubleSlot(assertType)) {
+//                            super.visitInsn(DUP2_X2);
+//                        } else {
+//                            super.visitInsn(DUP_X1);
+//                        }
+//
+//                        if (API.isPrimitiveType(assertType))
+//                            callBoxingMethod(assertType);
+//
+//
+//                        super.visitLdcInsn(currentTestName);
+//
+//
+//                        super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
+//
+//                    }
+                    else if (paramTypes.length == 1) {
                         String assertType = API.getAssertType(descriptor);
 
                         if (API.isDoubleSlot(assertType)) {

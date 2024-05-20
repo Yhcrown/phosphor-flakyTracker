@@ -90,7 +90,7 @@ public class FlakyTrackerTest {
 //                new ClassReader(className).accept(traceClassVisitor, parsingOptions);
 
         // 读取.class文件
-        File classFile = new File("C:\\Users\\yhcro\\IdeaProjects\\FlakyTracker\\DiUS-java-faker\\target\\test-classes\\flaky\\FlakyTest.class");
+        File classFile = new File("C:\\Users\\yhcro\\IdeaProjects\\FlakyTracker\\DiUS-java-faker\\target\\test-classes\\com\\github\\javafaker\\AddressTest.class");
         InputStream inputStream = new FileInputStream(classFile);
 
         // 创建ClassReader
