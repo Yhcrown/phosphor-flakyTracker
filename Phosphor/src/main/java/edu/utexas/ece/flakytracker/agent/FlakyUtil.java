@@ -23,9 +23,9 @@ public class FlakyUtil {
                     System.out.println(testName + " may be flaky: "+ taintLabel.toString());
             }
         }
-        if (taint.getLabels().length == 0) {
-            System.out.println(testName + " is not flaky");
-        }
+//        if (taint.getLabels().length == 0) {
+//            System.out.println(testName + " is not flaky");
+//        }
     }
 
 
