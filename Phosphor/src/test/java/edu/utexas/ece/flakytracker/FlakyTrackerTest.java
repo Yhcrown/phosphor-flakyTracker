@@ -18,9 +18,7 @@ import org.objectweb.asm.util.Printer;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -91,7 +89,13 @@ public class FlakyTrackerTest {
 //                TraceClassVisitor traceClassVisitor = new TraceClassVisitor(null, printer, printWriter);
 //                new ClassReader(className).accept(traceClassVisitor, parsingOptions);
 
-        ClassReader reader = new ClassReader(className);
+        // 读取.class文件
+        File classFile = new File("C:\\Users\\yhcro\\IdeaProjects\\FlakyTracker\\DiUS-java-faker\\target\\test-classes\\flaky\\FlakyTest.class");
+        InputStream inputStream = new FileInputStream(classFile);
+
+        // 创建ClassReader
+        ClassReader reader = new ClassReader(inputStream);
+//        ClassReader reader = new ClassReader(className);
 
         //        final ClassReader reader = new ClassReader(bytes);
         final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
