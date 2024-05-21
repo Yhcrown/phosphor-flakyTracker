@@ -17,21 +17,21 @@ public class FlakyUtil {
     static Set<String> logHistory = new HashSet<>();
 
     public static <T> void checkTainted(T a, String testName) {
-//        System.out.println("come in "+testName);
-        Taint taint = MultiTainter.getTaint(a);
-        for (Object label : taint.getLabels()) {
-            if (label instanceof FlakyTaintLabel) {
-                FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;
-
-                if (!taintLabel.isInWhiteList(testName)) {
-                    String log = testName + " may be flaky: " + taintLabel.toString();
-                    if (!logHistory.contains(log)) {
-                        System.out.println(log);
-                        logHistory.add(log);
-                    }
-                }
-            }
-        }
+        System.out.println("come in "+testName);
+//        Taint taint = MultiTainter.getTaint(a);
+//        for (Object label : taint.getLabels()) {
+//            if (label instanceof FlakyTaintLabel) {
+//                FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;
+//
+//                if (!taintLabel.isInWhiteList(testName)) {
+//                    String log = testName + " may be flaky: " + taintLabel.toString();
+//                    if (!logHistory.contains(log)) {
+//                        System.out.println(log);
+//                        logHistory.add(log);
+//                    }
+//                }
+//            }
+//        }
 //        if (taint.getLabels().length == 0) {
 //            System.out.println(testName + " is not flaky");
 //        }
