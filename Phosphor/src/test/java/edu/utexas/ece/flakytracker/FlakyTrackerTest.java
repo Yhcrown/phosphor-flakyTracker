@@ -63,7 +63,7 @@ public class FlakyTrackerTest {
 
         try {
 
-//            com.github.javafaker.Faker faker5 = new com.github.javafaker.Faker(locale0, randomService2);
+            com.github.javafaker.Faker faker5 = new com.github.javafaker.Faker(locale0, randomService2);
 
             org.junit.Assert.fail("Expected exception of type java.lang.IllegalArgumentException; message: locale is required");
 
@@ -73,7 +73,7 @@ public class FlakyTrackerTest {
 
         }
 
-// flaky:         org.junit.Assert.assertTrue("'" + long4 + "' != '" + 62L + "'", long4 == 62L);
+        org.junit.Assert.assertTrue("'" + long4 + "' != '" + 62L + "'", long4 == 62L);
 
     }
 
@@ -81,7 +81,7 @@ public class FlakyTrackerTest {
     @Test
     public void parseClassFile() throws IOException {
 //        API.getParamTypes("Ljava/io/PrintStream;");
-        String className = "com.mifmif.common.regex.Generex";
+        String className = "edu.utexas.ece.flakytracker.FlakyTest";
 //        Generex
         int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
         boolean asmCode = true;

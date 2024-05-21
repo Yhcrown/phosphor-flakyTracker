@@ -112,5 +112,25 @@ public class FlakyTest {
 //         System.out.println
     }
 
+    @Test
+    public void test054_1() throws Throwable {
+        if (debug)
+            System.out.format("%n%s%n", "TestGroup100Case0.test054");
+        java.util.Random random0 = null;
+        com.github.javafaker.service.RandomService randomService1 = new com.github.javafaker.service.RandomService(random0);
+        long long3 = randomService1.nextLong((long) 'a');
+        java.lang.String str5 = randomService1.hex((int) (short) 10);
+        // The following exception was thrown during execution in test generation
+        try {
+            java.lang.Integer int8 = randomService1.nextInt(42598, (int) (byte) -1);
+            org.junit.Assert.fail("Expected exception of type java.lang.IllegalArgumentException; message: bound must be positive");
+        } catch (java.lang.IllegalArgumentException e) {
+            // Expected exception.
+        }
+        org.junit.Assert.assertTrue("'" + long3 + "' != '" + 10L + "'", long3 == 10L);
+// flaky:         org.junit.Assert.assertEquals("'" + str5 + "' != '" + "F3A67DA8B8" + "'", str5, "F3A67DA8B8");
+    }
+
+
 }
 

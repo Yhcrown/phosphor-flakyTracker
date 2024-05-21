@@ -350,7 +350,7 @@ public class FlakyClassTracer extends ClassVisitor {
             String[] paramTypes = API.getParamTypes(descriptor);
             for (API api : trackAPI) {
                 if (opcode == INVOKESTATIC && api.getOwner().equals(owner) && api.getName().equals(name)) {
-                    if (paramTypes.length >= 2) {   // message, actual, expected
+                    if (paramTypes.length >= 2 && !"java/lang/String".equals(paramTypes[paramTypes.length-2])) {   // message, actual, expected
                         String assertType = API.getAssertType(descriptor);
 
                         if (API.isDoubleSlot(assertType)) {
@@ -428,7 +428,7 @@ public class FlakyClassTracer extends ClassVisitor {
 //                        super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
 //
 //                    }
-                    else if (paramTypes.length == 1) {
+                    else if (paramTypes.length == 1 || (paramTypes.length==2 && "java/lang/String".equals(paramTypes[0]))) {
                         String assertType = API.getAssertType(descriptor);
 
                         if (API.isDoubleSlot(assertType)) {
@@ -472,7 +472,7 @@ public class FlakyClassTracer extends ClassVisitor {
 //            }
 
             for (API clazz : nonDeterministicClass) {
-                if (opcode == INVOKESPECIAL && clazz.getOwner().equals(owner) && "<init>".equals(name) && clazz.getDescriptor().equals(descriptor)) {
+                if (opcode == INVOKESPECIAL && clazz.getOwner().equals(owner) && "<init>".equals(name) ) {
                     super.visitTypeInsn(NEW, taintClassLabel);
                     super.visitInsn(DUP);
                     super.visitLdcInsn(FlakyTaintLabel.RANDOM);
