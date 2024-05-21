@@ -2,18 +2,19 @@ package edu.utexas.ece.flakytracker.agent;
 
 import edu.columbia.cs.psl.phosphor.runtime.MultiTainter;
 import edu.columbia.cs.psl.phosphor.runtime.Taint;
-import edu.columbia.cs.psl.phosphor.struct.harmony.util.HashSet;
-import edu.columbia.cs.psl.phosphor.struct.harmony.util.Set;
+
 import org.apache.commons.io.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FlakyUtil {
 
-    public static Set<String> logHistory = new HashSet<>();
+    static Set<String> logHistory = new HashSet<>();
 
     public static <T> void checkTainted(T a, String testName) {
 //        System.out.println("come in "+testName);
