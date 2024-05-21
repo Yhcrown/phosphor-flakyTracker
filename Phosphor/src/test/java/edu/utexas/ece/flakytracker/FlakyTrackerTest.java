@@ -1,5 +1,6 @@
 package edu.utexas.ece.flakytracker;
 
+import com.mifmif.common.regex.Generex;
 import edu.columbia.cs.psl.phosphor.runtime.MultiTainter;
 import edu.utexas.ece.flakytracker.agent.FlakyClassTracer;
 import edu.utexas.ece.flakytracker.agent.FlakyTaintLabel;
@@ -80,7 +81,8 @@ public class FlakyTrackerTest {
     @Test
     public void parseClassFile() throws IOException {
 //        API.getParamTypes("Ljava/io/PrintStream;");
-        String className = "edu.utexas.ece.flakytracker.FlakyTrackerTest";
+        String className = "com.mifmif.common.regex.Generex";
+//        Generex
         int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
         boolean asmCode = true;
 
@@ -90,12 +92,12 @@ public class FlakyTrackerTest {
 //                new ClassReader(className).accept(traceClassVisitor, parsingOptions);
 
         // 读取.class文件
-        File classFile = new File("C:\\Users\\yhcro\\IdeaProjects\\FlakyTracker\\DiUS-java-faker\\target\\test-classes\\com\\github\\javafaker\\AddressTest.class");
-        InputStream inputStream = new FileInputStream(classFile);
+//        File classFile = new File("C:\\Users\\yhcro\\IdeaProjects\\FlakyTracker\\DiUS-java-faker\\target\\test-classes\\flaky\\FlakyTest.class");
+//        InputStream inputStream = new FileInputStream(classFile);
 
         // 创建ClassReader
-        ClassReader reader = new ClassReader(inputStream);
-//        ClassReader reader = new ClassReader(className);
+//        ClassReader reader = new ClassReader(inputStream);
+        ClassReader reader = new ClassReader(className);
 
         //        final ClassReader reader = new ClassReader(bytes);
         final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
@@ -109,7 +111,7 @@ public class FlakyTrackerTest {
 
     @Test
     public void parseASMFile() throws IOException{
-        String className = "edu.utexas.ece.flakytracker.FlakyTrackerTest";
+        String className = "com.mifmif.common.regex.Generex";
 //        className = "org.objectweb.asm.ClassReader";
 //        FlakyDemo.noninitial = 1;
         int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;

@@ -2,6 +2,8 @@ package edu.utexas.ece.flakytracker.agent;
 
 import edu.columbia.cs.psl.phosphor.runtime.MultiTainter;
 import edu.columbia.cs.psl.phosphor.runtime.Taint;
+import edu.columbia.cs.psl.phosphor.struct.harmony.util.HashSet;
+import edu.columbia.cs.psl.phosphor.struct.harmony.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -11,7 +13,7 @@ import java.io.IOException;
 
 public class FlakyUtil {
 
-
+    public static Set<String> logHistory = new HashSet<>();
 
     public static <T> void checkTainted(T a, String testName) {
 //        System.out.println("come in "+testName);
@@ -19,8 +21,14 @@ public class FlakyUtil {
         for (Object label : taint.getLabels()) {
             if (label instanceof FlakyTaintLabel) {
                 FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;
-                if (!taintLabel.isInWhiteList(testName))
-                    System.out.println(testName + " may be flaky: "+ taintLabel.toString());
+
+                if (!taintLabel.isInWhiteList(testName)) {
+                    String log = testName + " may be flaky: " + taintLabel.toString();
+                    if (!logHistory.contains(log)) {
+                        System.out.println(log);
+                        logHistory.add(log);
+                    }
+                }
             }
         }
 //        if (taint.getLabels().length == 0) {
