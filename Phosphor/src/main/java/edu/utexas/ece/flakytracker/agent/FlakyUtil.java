@@ -17,8 +17,6 @@ public class FlakyUtil {
     static Set<String> logHistory = new HashSet<>();
 
     public static <T> void checkTainted(T a, String testName) {
-//        System.out.println("come in "+testName);
-//        System.out.println("");
         Taint taint = MultiTainter.getTaint(a);
         for (Object label : taint.getLabels()) {
             if (label instanceof FlakyTaintLabel) {
@@ -33,9 +31,6 @@ public class FlakyUtil {
                 }
             }
         }
-//        if (taint.getLabels().length == 0) {
-//            System.out.println(testName + " is not flaky");
-//        }
     }
 
 
