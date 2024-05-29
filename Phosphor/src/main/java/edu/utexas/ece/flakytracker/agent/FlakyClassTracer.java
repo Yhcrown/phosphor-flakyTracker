@@ -56,6 +56,7 @@ public class FlakyClassTracer extends ClassVisitor {
         nonDeterministicAPI.addAll(Arrays.asList(nextInt, nextIntI));
 
         API RandomClass = new API("java/util/Random", "", "()V");
+        API ThreadLocalRandomClass = new API("java/util/concurrent/ThreadLocalRandom", "", "()V");
         nonDeterministicClass.add(RandomClass);
 
 
