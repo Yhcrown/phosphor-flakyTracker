@@ -14,7 +14,7 @@ import org.objectweb.asm.ClassWriter;
 import com.github.javafaker.*;
 import java.io.File;
 import java.io.IOException;
-import com.github.edgar615.*;
+//import com.github.edgar615.*;
 // import flaky.FlakyUtil;
 
 
@@ -154,10 +154,10 @@ public class FlakyTest {
         org.junit.Assert.assertTrue("'" + long4 + "' != '" + 62L + "'", long4 == 62L);
     }
 
-    @Test
-    public void tested(){
-        com.github.edgar615.util.base.Randoms.randomAlphabet((int)'4');
-    }
+//    @Test
+//    public void tested(){
+//        com.github.edgar615.util.base.Randoms.randomAlphabet((int)'4');
+//    }
 
 
 }
