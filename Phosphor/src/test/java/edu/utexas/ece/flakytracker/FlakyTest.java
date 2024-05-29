@@ -1,4 +1,5 @@
 package edu.utexas.ece.flakytracker;
+import com.github.javafaker.service.RandomService;
 import edu.columbia.cs.psl.phosphor.struct.harmony.util.Arrays;
 import edu.utexas.ece.flakytracker.agent.API;
 import edu.utexas.ece.flakytracker.agent.FlakyClassTracer;
@@ -13,6 +14,7 @@ import org.objectweb.asm.ClassWriter;
 import com.github.javafaker.*;
 import java.io.File;
 import java.io.IOException;
+import com.github.edgar615.*;
 // import flaky.FlakyUtil;
 
 
@@ -91,7 +93,7 @@ public class FlakyTest {
     @Test
     public void testTracker() throws IOException {
 //        API.getParamTypes("Ljava/io/PrintStream;");
-        String className = "flaky.FlakyTest";
+        String className = "edu.utexas.ece.flakytracker.FlakyTest";
         int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
         boolean asmCode = true;
 
@@ -129,6 +131,32 @@ public class FlakyTest {
         }
         org.junit.Assert.assertTrue("'" + long3 + "' != '" + 10L + "'", long3 == 10L);
 // flaky:         org.junit.Assert.assertEquals("'" + str5 + "' != '" + "F3A67DA8B8" + "'", str5, "F3A67DA8B8");
+    }
+
+    @Test
+    public void test071_1() throws Throwable {
+//         if (debug)
+//             System.out.format("%n%s%n", "TestGroup100Case0.test071");
+        java.util.Locale locale0 = null;
+        java.util.Random random1 = null;
+        com.github.javafaker.service.RandomService randomService2 = new RandomService(random1);
+        long long4 = randomService2.nextLong((long) 'a');
+//         // The following exception was thrown during execution in test generation
+        try {
+//            com.github.javafaker.service.FakeValuesService faker5 = new com.github.javafaker.service.FakeValuesService(locale0, randomService2);
+
+//                 throw new IllegalArgumentException();
+//             org.junit.Assert.fail("Expected exception of type java.lang.IllegalArgumentException; message: locale is required");
+        } catch (java.lang.IllegalArgumentException e) {
+//             // Expected exception.
+        }
+        System.out.println("test071");
+        org.junit.Assert.assertTrue("'" + long4 + "' != '" + 62L + "'", long4 == 62L);
+    }
+
+    @Test
+    public void tested(){
+        com.github.edgar615.util.base.Randoms.randomAlphabet((int)'4');
     }
 
 
