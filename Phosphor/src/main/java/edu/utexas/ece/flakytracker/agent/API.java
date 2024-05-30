@@ -18,12 +18,21 @@ public class API {
 
     String returnType;
 
+    String ASMreturType;
     public API(String owner, String name, String descriptor) {
         this.owner = owner;
         this.name = name;
         this.descriptor = descriptor;
+        this.returnType = API.getReturnType(descriptor);
+        this.ASMreturType = API.getASMreturType(descriptor);
     }
 
+    public static String getASMreturType(String descriptor) {
+        if (descriptor.indexOf(')')>=0 && descriptor.indexOf(')')+1 < descriptor.length() && descriptor.charAt(descriptor.indexOf(')')+1) == 'L'){
+            return descriptor.substring(descriptor.indexOf(')')+2,descriptor.length()-1);
+        }
+        return null;
+    }
 
     public static String getAssertType(String descriptor) {
         String[] types = getParamTypes(descriptor);

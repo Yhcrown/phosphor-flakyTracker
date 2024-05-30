@@ -50,14 +50,15 @@ public class FlakyClassTracer extends ClassVisitor {
         trackAPI = new ArrayList<>();
         nonDeterministicClass = new ArrayList<>();
 
-        API nextInt = new API("java/util/Random", "nextInt", "()I");
-        API nextIntI = new API("java/util/Random", "nextInt", "(I)I");
+//        API nextInt = new API("java/util/Random", "nextInt", "()I");
+//        API nextIntI = new API("java/util/Random", "nextInt", "(I)I");
+        API ThreadLocalCurrent = new API("java/util/concurrent/ThreadLocalRandom","current","()Ljava/util/concurrent/ThreadLocalRandom;");
         // API nextLong = new API("java/util/Random", "nextLong", "()L");
-        nonDeterministicAPI.addAll(Arrays.asList(nextInt, nextIntI));
+        nonDeterministicAPI.addAll(Arrays.asList(ThreadLocalCurrent));
 
         API RandomClass = new API("java/util/Random", "", "()V");
         API ThreadLocalRandomClass = new API("java/util/concurrent/ThreadLocalRandom", "", "()V");
-        nonDeterministicClass.add(RandomClass);
+        nonDeterministicClass.addAll(Arrays.asList(RandomClass,ThreadLocalRandomClass));
 
 
         API assertEquals = new API("org/junit/Assert", "assertEquals", "()V");
@@ -456,21 +457,23 @@ public class FlakyClassTracer extends ClassVisitor {
 
             super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
 
-//            for (API api : nonDeterministicAPI) {
-//                if (opcode == INVOKEVIRTUAL && api.getOwner().equals(owner) && api.getName().equals(name) && api.getDescriptor().equals(descriptor)) {
-//
-//
-//                    super.visitTypeInsn(NEW, taintClassLabel);
-//                    super.visitInsn(DUP);
-//                    super.visitLdcInsn(FlakyTaintLabel.RANDOM);
-//                    super.visitLdcInsn(owner + "." + name);
-//                    super.visitLdcInsn(className);
-//                    super.visitLdcInsn(lineNumber);
-//                    super.visitLdcInsn(getLabelIndex()); //label
-//                    super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
-//                    callTaintedMethod(descriptor);
-//                }
-//            }
+            for (API api : nonDeterministicAPI) {
+                if ((opcode == INVOKEVIRTUAL || opcode == INVOKESTATIC) && api.getOwner().equals(owner) && api.getName().equals(name) && api.getDescriptor().equals(descriptor)) {
+
+
+                    super.visitTypeInsn(NEW, taintClassLabel);
+                    super.visitInsn(DUP);
+                    super.visitLdcInsn(FlakyTaintLabel.RANDOM);
+                    super.visitLdcInsn(owner + "." + name);
+                    super.visitLdcInsn(className);
+                    super.visitLdcInsn(lineNumber);
+                    super.visitLdcInsn(getLabelIndex()); //label
+                    super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+                    callTaintedMethod(descriptor);
+
+                    super.visitTypeInsn(CHECKCAST, api.ASMreturType);
+                }
+            }
 
             for (API clazz : nonDeterministicClass) {
                 if (opcode == INVOKESPECIAL && clazz.getOwner().equals(owner) && "<init>".equals(name) ) {
