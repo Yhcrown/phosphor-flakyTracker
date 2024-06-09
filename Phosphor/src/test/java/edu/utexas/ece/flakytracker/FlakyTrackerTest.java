@@ -1,5 +1,6 @@
 package edu.utexas.ece.flakytracker;
 
+import com.google.common.base.Preconditions;
 import com.mifmif.common.regex.Generex;
 import edu.columbia.cs.psl.phosphor.runtime.MultiTainter;
 import edu.utexas.ece.flakytracker.agent.FlakyClassTracer;
@@ -22,6 +23,7 @@ import org.objectweb.asm.util.TraceClassVisitor;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class FlakyTrackerTest {
 
@@ -81,7 +83,7 @@ public class FlakyTrackerTest {
     @Test
     public void parseClassFile() throws IOException {
 //        API.getParamTypes("Ljava/io/PrintStream;");
-        String className = "edu.utexas.ece.flakytracker.FlakyTest";
+        String className = "com.github.edgar615.util.base.Randoms";
 //        Generex
         int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
         boolean asmCode = true;
@@ -111,8 +113,8 @@ public class FlakyTrackerTest {
 
     @Test
     public void parseASMFile() throws IOException{
-        String className = "com.mifmif.common.regex.Generex";
-//        className = "org.objectweb.asm.ClassReader";
+        String className = "com.github.edgar615.util.base.Randoms";
+        className = "edu.utexas.ece.flakytracker.FlakyTrackerTest";
 //        FlakyDemo.noninitial = 1;
         int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
         boolean asmCode = true;
@@ -133,4 +135,13 @@ public class FlakyTrackerTest {
         classReader.accept(traceClassVisitor,0);
     }
 
+    @Test
+    public void howtoSwap(){
+        Random a = ThreadLocalRandom.current();
+        if (a instanceof ThreadLocalRandom)
+            System.out.println("haha");
+        else
+            System.out.println("hagepi");
+
+    }
 }

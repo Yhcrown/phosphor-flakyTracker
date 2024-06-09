@@ -10,14 +10,20 @@ import org.objectweb.asm.ClassWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class FlakyUtil {
 
     static Set<String> logHistory = new HashSet<>();
 
+
     public static <T> void checkTainted(T a, String testName) {
+        if (a == null)
+            return;
         Taint taint = MultiTainter.getTaint(a);
+        if (taint == null)
+            return;
         for (Object label : taint.getLabels()) {
             if (label instanceof FlakyTaintLabel) {
                 FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;

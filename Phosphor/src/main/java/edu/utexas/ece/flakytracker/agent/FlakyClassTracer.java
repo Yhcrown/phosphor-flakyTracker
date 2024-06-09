@@ -18,6 +18,8 @@ public class FlakyClassTracer extends ClassVisitor {
 
     public static List<API> nonDeterministicClass;
 
+    public static List<API> allAPINeedToBeTainted;
+
 
     public static String trackerProxyClass = "edu/utexas/ece/flakytracker/agent/FlakyUtil";
 
@@ -39,6 +41,8 @@ public class FlakyClassTracer extends ClassVisitor {
 
     List<String[]> staticVaribles = new ArrayList<>();
 
+    List<String[]> publicMethods = new ArrayList<>();
+
     static int labelIndex = 0;
 
     public static int getLabelIndex() {
@@ -49,16 +53,21 @@ public class FlakyClassTracer extends ClassVisitor {
         nonDeterministicAPI = new ArrayList<>();
         trackAPI = new ArrayList<>();
         nonDeterministicClass = new ArrayList<>();
-
+        allAPINeedToBeTainted = new ArrayList<>();
 //        API nextInt = new API("java/util/Random", "nextInt", "()I");
 //        API nextIntI = new API("java/util/Random", "nextInt", "(I)I");
-        API ThreadLocalCurrent = new API("java/util/concurrent/ThreadLocalRandom","current","()Ljava/util/concurrent/ThreadLocalRandom;");
+        API ThreadLocalCurrent = new API("java/util/concurrent/ThreadLocalRandom", "current", "()Ljava/util/concurrent/ThreadLocalRandom;");
+        API FactoryTestMethod = new API("flaky/FactoryTest", "getInstance", "()Lflaky/FactoryTest;");
         // API nextLong = new API("java/util/Random", "nextLong", "()L");
-        nonDeterministicAPI.addAll(Arrays.asList(ThreadLocalCurrent));
+        nonDeterministicAPI.addAll(Arrays.asList(ThreadLocalCurrent, FactoryTestMethod));
+
 
         API RandomClass = new API("java/util/Random", "", "()V");
-        API ThreadLocalRandomClass = new API("java/util/concurrent/ThreadLocalRandom", "", "()V");
-        nonDeterministicClass.addAll(Arrays.asList(RandomClass,ThreadLocalRandomClass));
+        API ThreadLocalRandomClass = new API("java/util/concurrent/ThreadLocalRandom", "java/util/Random", "()V");
+        API FactoryTest = new API("flaky/FactoryTest", "", "()V");
+        nonDeterministicClass.addAll(Arrays.asList(RandomClass, ThreadLocalRandomClass, FactoryTest));
+
+        allAPINeedToBeTainted.addAll(Arrays.asList(ThreadLocalRandomClass));
 
 
         API assertEquals = new API("org/junit/Assert", "assertEquals", "()V");
@@ -117,8 +126,13 @@ public class FlakyClassTracer extends ClassVisitor {
         } else if ("<init>".equals(name)) {
             mv = new FlakyMethodVisitor(api, mv);
         }
+
+        if (access == ACC_PUBLIC)
+            publicMethods.add(new String[]{name, descriptor});
+
         return mv;
     }
+
 
     @Override
     public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
@@ -347,12 +361,13 @@ public class FlakyClassTracer extends ClassVisitor {
             }
         }
 
+
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
             String[] paramTypes = API.getParamTypes(descriptor);
             for (API api : trackAPI) {
                 if (opcode == INVOKESTATIC && api.getOwner().equals(owner) && api.getName().equals(name)) {
-                    if (paramTypes.length >= 2 && !"java/lang/String".equals(paramTypes[paramTypes.length-2])) {   // message, actual, expected
+                    if (paramTypes.length >= 2 && !"java/lang/String".equals(paramTypes[paramTypes.length - 2])) {   // message, actual, expected
                         String assertType = API.getAssertType(descriptor);
 
                         if (API.isDoubleSlot(assertType)) {
@@ -378,7 +393,7 @@ public class FlakyClassTracer extends ClassVisitor {
 
                         super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
 
-                        if(("java/lang/String" ).equals(paramTypes[paramTypes.length - 2]))
+                        if (("java/lang/String").equals(paramTypes[paramTypes.length - 2]))
                             break;
 
                         if (API.isDoubleSlot(assertType)) {
@@ -430,7 +445,7 @@ public class FlakyClassTracer extends ClassVisitor {
 //                        super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, trackerFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
 //
 //                    }
-                    else if (paramTypes.length == 1 || (paramTypes.length==2 && "java/lang/String".equals(paramTypes[0]))) {
+                    else if (paramTypes.length == 1 || (paramTypes.length == 2 && "java/lang/String".equals(paramTypes[0]))) {
                         String assertType = API.getAssertType(descriptor);
 
                         if (API.isDoubleSlot(assertType)) {
@@ -455,7 +470,86 @@ public class FlakyClassTracer extends ClassVisitor {
             }
 
 
+
+            for (API api : allAPINeedToBeTainted) {
+                if (opcode == INVOKEVIRTUAL && (api.owner.equals(owner) || api.name.equals(owner)) && !API.getReturnType(descriptor).equals("void")) {
+
+                    if (paramTypes.length == 0) {
+                        super.visitInsn(DUP);
+                    } else if (paramTypes.length == 1 && !API.isDoubleSlot(paramTypes[0])) {  // lo1 target, -->dup_x1 lo1 target lo1 -->
+                        super.visitInsn(DUP_X1);
+                        super.visitInsn(POP);
+                        super.visitInsn(DUP);
+                    } else if (paramTypes.length == 1 && API.isDoubleSlot(paramTypes[0])) { // lo1 lo2 target -->
+                        super.visitInsn(DUP2_X1);
+                        super.visitInsn(POP2);
+                        super.visitInsn(DUP);
+                    } else if (paramTypes.length == 2 && !API.isDoubleSlot(paramTypes[0]) && !API.isPrimitiveType(paramTypes[1])) {
+                        super.visitInsn(DUP2_X1);
+                        super.visitInsn(POP2);
+                        super.visitInsn(DUP);
+                    } else {
+                        break; //Do not support
+                    }
+
+                    // la1, la2 , target
+
+                    Label notThreadLocalRandom = new Label();
+                    Label isThreadLocalRandom = new Label();
+                    Label end= new Label();
+
+                    // la1,  la2, lb, lc1, lc2, target
+                    super.visitTypeInsn(Opcodes.INSTANCEOF, api.owner);
+                    super.visitJumpInsn(IFEQ, notThreadLocalRandom); ///
+                    super.visitLabel(isThreadLocalRandom);
+
+                    super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+
+                    super.visitTypeInsn(NEW, taintClassLabel);
+                    super.visitInsn(DUP);
+                    super.visitLdcInsn(FlakyTaintLabel.RANDOM);
+                    super.visitLdcInsn(owner + "." + name);
+                    super.visitLdcInsn(className);
+                    super.visitLdcInsn(lineNumber);
+                    super.visitLdcInsn(getLabelIndex()); //label
+                    super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+                    callTaintedMethod(descriptor);
+                    super.visitJumpInsn(GOTO,end);
+
+                    super.visitLabel(notThreadLocalRandom);
+
+
+
+                    super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+
+//                    super.visitJumpInsn(GOTO,end);
+                    super.visitLabel(end);
+
+                    return;
+                }
+            }
+
             super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+//            super.visitLabel(notThreadLocalRandom);
+            for (API api : allAPINeedToBeTainted) {
+                if (opcode == INVOKEVIRTUAL && (api.owner.equals(owner) || api.name.equals(owner)) && !API.getReturnType(descriptor).equals("void")) {
+
+                    super.visitTypeInsn(NEW, taintClassLabel);
+                    super.visitInsn(DUP);
+                    super.visitLdcInsn(FlakyTaintLabel.RANDOM);
+                    super.visitLdcInsn(owner + "." + name);
+                    super.visitLdcInsn(className);
+                    super.visitLdcInsn(lineNumber);
+                    super.visitLdcInsn(getLabelIndex()); //label
+                    super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+                    callTaintedMethod(descriptor);
+
+
+                }
+            }
+
+//            super.visitLabel(notThreadLocalRandom);
+
 
             for (API api : nonDeterministicAPI) {
                 if ((opcode == INVOKEVIRTUAL || opcode == INVOKESTATIC) && api.getOwner().equals(owner) && api.getName().equals(name) && api.getDescriptor().equals(descriptor)) {
@@ -476,7 +570,7 @@ public class FlakyClassTracer extends ClassVisitor {
             }
 
             for (API clazz : nonDeterministicClass) {
-                if (opcode == INVOKESPECIAL && clazz.getOwner().equals(owner) && "<init>".equals(name) ) {
+                if (opcode == INVOKESPECIAL && clazz.getOwner().equals(owner) && "<init>".equals(name)) {
                     super.visitTypeInsn(NEW, taintClassLabel);
                     super.visitInsn(DUP);
                     super.visitLdcInsn(FlakyTaintLabel.RANDOM);
@@ -488,6 +582,7 @@ public class FlakyClassTracer extends ClassVisitor {
                     super.visitMethodInsn(Opcodes.INVOKESTATIC, tainterClass, "taintedReference", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
 
                     super.visitTypeInsn(CHECKCAST, clazz.getOwner());
+                    return;
                 }
 
 

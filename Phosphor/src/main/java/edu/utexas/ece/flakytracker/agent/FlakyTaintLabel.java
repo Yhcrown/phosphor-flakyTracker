@@ -19,7 +19,7 @@ public class FlakyTaintLabel {
 
     List<String> whiteList = new ArrayList<>();
 
-    static int index = 0;
+//    static int index = 0;
 
 
     public FlakyTaintLabel(int type, String cause, String file,int line, int label) {
