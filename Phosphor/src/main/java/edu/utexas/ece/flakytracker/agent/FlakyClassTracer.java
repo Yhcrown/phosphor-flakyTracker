@@ -470,50 +470,61 @@ public class FlakyClassTracer extends ClassVisitor {
             }
 
 
+            Label notThreadLocalRandom = new Label();
+            Label isThreadLocalRandom = new Label();
+            Label end= new Label();
 
             for (API api : allAPINeedToBeTainted) {
                 if (opcode == INVOKEVIRTUAL && (api.owner.equals(owner) || api.name.equals(owner)) && !API.getReturnType(descriptor).equals("void")) {
 
                     if (paramTypes.length == 0) {
                         super.visitInsn(DUP);
-                    } else if (paramTypes.length == 1 && !API.isDoubleSlot(paramTypes[0])) {  // lo1 target, -->dup_x1 lo1 target lo1 -->
+                    } else if (paramTypes.length == 1 && !API.isDoubleSlot(paramTypes[0])) {  // lo1 target, -->dup_x1 lo1 target lo1 -->  target target lo1
                         super.visitInsn(DUP_X1);
                         super.visitInsn(POP);
-                        super.visitInsn(DUP);
-                    } else if (paramTypes.length == 1 && API.isDoubleSlot(paramTypes[0])) { // lo1 lo2 target -->
+                        super.visitInsn(DUP_X1);
+                    } else if (paramTypes.length == 1 && API.isDoubleSlot(paramTypes[0])) { // lo1 lo2 target -->     target lo1 lo2 target
                         super.visitInsn(DUP2_X1);
                         super.visitInsn(POP2);
-                        super.visitInsn(DUP);
+                        super.visitInsn(DUP_X2);
                     } else if (paramTypes.length == 2 && !API.isDoubleSlot(paramTypes[0]) && !API.isPrimitiveType(paramTypes[1])) {
                         super.visitInsn(DUP2_X1);
                         super.visitInsn(POP2);
-                        super.visitInsn(DUP);
+                        super.visitInsn(DUP_X2);
+
                     } else {
                         break; //Do not support
                     }
 
                     // la1, la2 , target
 
-                    Label notThreadLocalRandom = new Label();
-                    Label isThreadLocalRandom = new Label();
-                    Label end= new Label();
 
                     // la1,  la2, lb, lc1, lc2, target
                     super.visitTypeInsn(Opcodes.INSTANCEOF, api.owner);
                     super.visitJumpInsn(IFEQ, notThreadLocalRandom); ///
                     super.visitLabel(isThreadLocalRandom);
 
-                    super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+
+                }
+            }
+
+            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+//            super.visitLabel(notThreadLocalRandom);
+            for (API api : allAPINeedToBeTainted) {
+                if (opcode == INVOKEVIRTUAL && (api.owner.equals(owner) || api.name.equals(owner)) && !API.getReturnType(descriptor).equals("void")) {
+
 
                     super.visitTypeInsn(NEW, taintClassLabel);
                     super.visitInsn(DUP);
                     super.visitLdcInsn(FlakyTaintLabel.RANDOM);
-                    super.visitLdcInsn(owner + "." + name);
+                    super.visitLdcInsn(api.owner + "." + name);
                     super.visitLdcInsn(className);
                     super.visitLdcInsn(lineNumber);
                     super.visitLdcInsn(getLabelIndex()); //label
                     super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
                     callTaintedMethod(descriptor);
+//                    super.visitTypeInsn(CHECKCAST, "Integer");
+
                     super.visitJumpInsn(GOTO,end);
 
                     super.visitLabel(notThreadLocalRandom);
@@ -524,25 +535,6 @@ public class FlakyClassTracer extends ClassVisitor {
 
 //                    super.visitJumpInsn(GOTO,end);
                     super.visitLabel(end);
-
-                    return;
-                }
-            }
-
-            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
-//            super.visitLabel(notThreadLocalRandom);
-            for (API api : allAPINeedToBeTainted) {
-                if (opcode == INVOKEVIRTUAL && (api.owner.equals(owner) || api.name.equals(owner)) && !API.getReturnType(descriptor).equals("void")) {
-
-                    super.visitTypeInsn(NEW, taintClassLabel);
-                    super.visitInsn(DUP);
-                    super.visitLdcInsn(FlakyTaintLabel.RANDOM);
-                    super.visitLdcInsn(owner + "." + name);
-                    super.visitLdcInsn(className);
-                    super.visitLdcInsn(lineNumber);
-                    super.visitLdcInsn(getLabelIndex()); //label
-                    super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
-                    callTaintedMethod(descriptor);
 
 
                 }
@@ -566,6 +558,7 @@ public class FlakyClassTracer extends ClassVisitor {
                     callTaintedMethod(descriptor);
 
                     super.visitTypeInsn(CHECKCAST, api.ASMreturType);
+
                 }
             }
 

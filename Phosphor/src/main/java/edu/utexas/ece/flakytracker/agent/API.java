@@ -31,9 +31,9 @@ public class API {
         if (descriptor.indexOf(')')>=0 && descriptor.indexOf(')')+1 < descriptor.length() && descriptor.charAt(descriptor.indexOf(')')+1) == 'L'){
             return descriptor.substring(descriptor.indexOf(')')+2,descriptor.length()-1);
         }
-//        else if (descriptor.indexOf(')')>=0 && descriptor.indexOf(')')+1 < descriptor.length()){
-//            return
-//        }
+        else if (descriptor.indexOf(')')>=0 && descriptor.indexOf(')')+1 < descriptor.length()){
+            return getReturnType(descriptor);
+        }
         return null;
     }
 
