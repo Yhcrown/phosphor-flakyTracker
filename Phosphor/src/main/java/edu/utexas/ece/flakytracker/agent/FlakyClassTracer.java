@@ -3,9 +3,14 @@ package edu.utexas.ece.flakytracker.agent;
 import edu.columbia.cs.psl.phosphor.Configuration;
 import org.objectweb.asm.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.security.SecureRandom;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -56,16 +61,99 @@ public class FlakyClassTracer extends ClassVisitor {
         allAPINeedToBeTainted = new ArrayList<>();
 //        API nextInt = new API("java/util/Random", "nextInt", "()I");
 //        API nextIntI = new API("java/util/Random", "nextInt", "(I)I");
-        API ThreadLocalCurrent = new API("java/util/concurrent/ThreadLocalRandom", "current", "()Ljava/util/concurrent/ThreadLocalRandom;");
-        API FactoryTestMethod = new API("flaky/FactoryTest", "getInstance", "()Lflaky/FactoryTest;");
+        API ThreadLocalCurrent = new API("java/util/concurrent/ThreadLocalRandom", "current", "()Ljava/util/concurrent/ThreadLocalRandom;",FlakyTaintLabel.RANDOM);
+        API hashCode = new API("ANY","hashCode", "()Ljava/lang/Object;",FlakyTaintLabel.RANDOM);
+        API CalenderInstance = new API("java/util/Calendar","getInstance","()Ljava/util/Calendar;",FlakyTaintLabel.TIME);
+        API LocalDateTimeNow = new API("java/time/LocalDateTime","now","()Ljava/time/LocalDataTime;",FlakyTaintLabel.TIME);
+        API LocalDateNow = new API("java/time/LocalDate","now","()Ljava/time/LocalDate;",FlakyTaintLabel.TIME);
+        API LocalTimeNow = new API("java/time/LocalTime","now","()Ljava/time/LocalTime;",FlakyTaintLabel.TIME);
+        API LocalDateTimeNowZone = new API("java/time/LocalDateTime", "now", "(Ljava/time/ZoneId;)Ljava/time/LocalDataTime;",FlakyTaintLabel.TIME);
+        API LocalDateNowZone = new API("java/time/LocalDate","now","(Ljava/time/ZoneId;)Ljava/time/LocalDate;",FlakyTaintLabel.TIME);
+        API LocalTimeNowZone = new API("java/time/LocalTime","now","(Ljava/time/ZoneId;)Ljava/time/LocalTime;",FlakyTaintLabel.TIME);
+        API ClockSystemUTC = new API("java/time/Clock","systemUTC","()Ljava/time/Clock;",FlakyTaintLabel.TIME);
+        API ClockSystemDefaultZone = new API("java/time/Clock","systemDefaultZone","()Ljava/time/Clock;",FlakyTaintLabel.TIME);
+        API ClockMillis = new API("java/time/Clock","millis","()J",FlakyTaintLabel.TIME);
+        API ClockInstant = new API("java/time/Clock","instant","()Ljava/time/Instant;",FlakyTaintLabel.TIME);
+        API ClockSystem = new API("java/time/Clock","system","(Ljava/time/ZoneId)Ljava/time/Clock;",FlakyTaintLabel.TIME);
+        //TODO: need refine the logic of Clock here;
+
+
+
+        API InstantNow = new API("java/time/Instant","now","()Ljava/time/Instant;",FlakyTaintLabel.TIME);
+        API ZonedDataTimeNow = new API("java/time/ZonedDateTime","now","()Ljava/time/ZonedDateTime;",FlakyTaintLabel.TIME);
+        API ZonedDataTimeNowZone = new API("java/time/ZonedDateTime","now","(Ljava/time/ZoneId;)Ljava/time/ZonedDateTime;",FlakyTaintLabel.TIME);
+        API OffsetDateTimeNow = new API("java/time/OffsetDateTime","now","()Ljava/time/OffsetDateTime;",FlakyTaintLabel.TIME);
+        API OffsetDateTimeNowZone = new API("java/time/OffsetDateTime","now","(Ljava/time/ZoneId;)Ljava/time/OffsetDateTime;",FlakyTaintLabel.TIME);
+        API YearMonthNow = new API("java/time/YearMonth","now","()Ljava/time/YearMonth;",FlakyTaintLabel.TIME);
+        API YearMonthNowZone = new API("java/time/YearMonth","now","(Ljava/time/ZoneId;)Ljava/time/YearMonth;",FlakyTaintLabel.TIME);
+        API MonthDayNow = new API("java/time/MonthDayNow","now","()Ljava/time/MonthDay;",FlakyTaintLabel.TIME);
+        API MonthDayNowZone = new API("java/time/MonthDayNow","now","(Ljava/time/ZoneId;)Ljava/time/MonthDay;",FlakyTaintLabel.TIME);
+        API YearNow = new API("java/time/Year","now","()Ljava/time/Year;",FlakyTaintLabel.TIME);
+        API YearNowZone = new API("java/time/Year","now","(Ljava/time/ZoneId;)Ljava/time/Year;",FlakyTaintLabel.TIME);
+
+        API SystemNanoTime = new API("java/lang/System","nanoTime","()J",FlakyTaintLabel.TIME);
+        API SystemCurrentTimeMillis = new API("java/lang/System","currentTimeMillis","()J",FlakyTaintLabel.TIME);
+        API RandomUUID = new API("java/util/UUID","randomUUID","()Ljava/util/UUID;",FlakyTaintLabel.RANDOM);
+        //TODO: note this class will be replaced by Phosphor
+
+        API SystemGetEnv = new API("java/lang/System","getenv","(Ljava/lang/String;)Ljava/lang/String;",FlakyTaintLabel.ENVIRONMENT);
+        API SystemGetEnvMap = new API("java/lang/System","getenv","()Ljava/lang/String;",FlakyTaintLabel.ENVIRONMENT);
+
+        API TotalMemory = new API("java/lang/Runtime","totalMemory","()J",FlakyTaintLabel.RESOURCE);
+        API FreeMemory = new API("java/lang/Runtime","freeMemory","()J",FlakyTaintLabel.RESOURCE);
+        API MaxMemory = new API("java/lang/Runtime","maxMemory","()J",FlakyTaintLabel.RESOURCE);
+        API AvailableProcessors = new API("java/lang/Runtime","availableProcessors","()I",FlakyTaintLabel.RESOURCE);
+
+        API GetLocalHost = new API("java/net/InetAddress","getLocalHost","()Ljava/net/InetAddress;",FlakyTaintLabel.ENVIRONMENT);
+//        Socket
+
+
+//        API
+        //        System.getenv()
+
         // API nextLong = new API("java/util/Random", "nextLong", "()L");
-        nonDeterministicAPI.addAll(Arrays.asList(ThreadLocalCurrent, FactoryTestMethod));
+        nonDeterministicAPI.addAll(Arrays.asList(
+                ThreadLocalCurrent,
+                hashCode,
+                CalenderInstance,
+                LocalDateTimeNow,
+                LocalDateNow,
+                LocalTimeNow,
+                LocalDateTimeNowZone,
+                LocalDateNowZone,
+                LocalTimeNowZone,
+                ClockSystemUTC,
+                ClockSystemDefaultZone,
+                ClockMillis,
+                ClockInstant,
+                ClockSystem,
+                InstantNow,
+                ZonedDataTimeNow,
+                ZonedDataTimeNowZone,
+                OffsetDateTimeNow,
+                OffsetDateTimeNowZone,
+                YearMonthNow,
+                YearMonthNowZone,
+                MonthDayNow,
+                MonthDayNowZone,
+                YearNow,
+                YearNowZone,
+                SystemNanoTime,
+                SystemCurrentTimeMillis,
+                RandomUUID,
+                SystemGetEnv,
+                SystemGetEnvMap,
+                TotalMemory,
+                FreeMemory,
+                MaxMemory,
+                AvailableProcessors,
+                GetLocalHost
+        ));
 
-
-        API RandomClass = new API("java/util/Random", "", "()V");
-        API ThreadLocalRandomClass = new API("java/util/concurrent/ThreadLocalRandom", "java/util/Random", "()V");
-        API FactoryTest = new API("flaky/FactoryTest", "", "()V");
-        nonDeterministicClass.addAll(Arrays.asList(RandomClass, ThreadLocalRandomClass, FactoryTest));
+        API DateClass = new API("java/util/Date","","()V",FlakyTaintLabel.TIME);
+        API RandomClass = new API("java/util/Random", "", "()V",FlakyTaintLabel.RANDOM);
+        API ThreadLocalRandomClass = new API("java/util/concurrent/ThreadLocalRandom", "java/util/Random", "()V", FlakyTaintLabel.RANDOM);
+        nonDeterministicClass.addAll(Arrays.asList(RandomClass, ThreadLocalRandomClass));
 
         allAPINeedToBeTainted.addAll(Arrays.asList(ThreadLocalRandomClass));
 
@@ -549,7 +637,7 @@ public class FlakyClassTracer extends ClassVisitor {
 
                     super.visitTypeInsn(NEW, taintClassLabel);
                     super.visitInsn(DUP);
-                    super.visitLdcInsn(FlakyTaintLabel.RANDOM);
+                    super.visitLdcInsn(api.flakyType);
                     super.visitLdcInsn(owner + "." + name);
                     super.visitLdcInsn(className);
                     super.visitLdcInsn(lineNumber);

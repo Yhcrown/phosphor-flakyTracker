@@ -1,72 +1,410 @@
 // class version 52.0 (52)
 // access flags 0x21
-public class edu/utexas/ece/flakytracker/FlakyTrackerTest implements edu/columbia/cs/psl/phosphor/struct/TaintedWithObjTag {
+public class edu/utexas/ece/flakytracker/FlakyTest implements edu/columbia/cs/psl/phosphor/struct/TaintedWithObjTag {
 
 
   @Ledu/columbia/cs/psl/phosphor/runtime/TaintInstrumented;() // invisible
-  // compiled from: FlakyTrackerTest.java
+  // compiled from: FlakyTest.java
+
+  @Lorg/junit/FixMethodOrder;(value=Lorg/junit/runners/MethodSorters;.NAME_ASCENDING)
+
+  // access flags 0x9
+  public static Z debug
 
   // access flags 0x0
-  I a
+  Ljava/util/concurrent/ThreadLocalRandom; current2
 
   // access flags 0x1
   public <init>(Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
    L0
    L1
+    NEW edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag
+    DUP
+    INVOKESPECIAL edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.<init> ()V
+    ASTORE 2
    L2
-    LINENUMBER 15 L2
+   L3
+    LINENUMBER 19 L3
     ALOAD 0
     ALOAD 1
     POP
     INVOKESPECIAL java/lang/Object.<init> ()V
-   L3
-    LINENUMBER 17 L3
+   L4
+    LINENUMBER 23 L4
     ALOAD 0
     ALOAD 1
-    ICONST_1
+    ALOAD 2
+    ACONST_NULL
+    INVOKESTATIC java/util/concurrent/ThreadLocalRandom.current$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Ljava/util/concurrent/ThreadLocalRandom;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST java/util/concurrent/ThreadLocalRandom
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+   L5
+   L6
+   L7
+    NEW edu/utexas/ece/flakytracker/agent/FlakyTaintLabel
     INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    DUP2
+    LDC 1
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC "java/util/concurrent/ThreadLocalRandom.current"
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC "edu/utexas/ece/flakytracker/FlakyTest"
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC 23
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC 0
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    INVOKESPECIAL edu/utexas/ece/flakytracker/agent/FlakyTaintLabel.<init> (Ledu/columbia/cs/psl/phosphor/runtime/Taint;ILedu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/String;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/String;Ledu/columbia/cs/psl/phosphor/runtime/Taint;ILedu/columbia/cs/psl/phosphor/runtime/Taint;ILedu/columbia/cs/psl/phosphor/runtime/Taint;)V
+    ALOAD 2
+    ACONST_NULL
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/MultiTainter.taintedReference$$PHOSPHORTAGGED (Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Ljava/lang/Object;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST java/lang/Object
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    SWAP
+    CHECKCAST java/util/concurrent/ThreadLocalRandom
+    SWAP
     DUP2_X2
     POP2
     POP
     DUP_X2
     SWAP
-    PUTFIELD edu/utexas/ece/flakytracker/FlakyTrackerTest.aPHOSPHOR_TAG : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
-    PUTFIELD edu/utexas/ece/flakytracker/FlakyTrackerTest.a : I
+    PUTFIELD edu/utexas/ece/flakytracker/FlakyTest.current2PHOSPHOR_TAG : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    PUTFIELD edu/utexas/ece/flakytracker/FlakyTest.current2 : Ljava/util/concurrent/ThreadLocalRandom;
     RETURN
-   L4
-    LOCALVARIABLE this$$PHOSPHORTAGGED Ledu/columbia/cs/psl/phosphor/runtime/Taint; L0 L4 1
-    LOCALVARIABLE this Ledu/utexas/ece/flakytracker/FlakyTrackerTest; L0 L4 0
-   L5
-    MAXSTACK = 102
-    MAXLOCALS = 2
+   L8
+    LOCALVARIABLE this$$PHOSPHORTAGGED Ledu/columbia/cs/psl/phosphor/runtime/Taint; L0 L8 1
+   L9
+    LOCALVARIABLE phosphorReturnPreAlloc0 Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag; L1 L9 2
+    LOCALVARIABLE this Ledu/utexas/ece/flakytracker/FlakyTest; L0 L8 0
+    MAXSTACK = 109
+    MAXLOCALS = 3
 
   // access flags 0x1
-  public test01$$PHOSPHORTAGGED(Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
+  public test031_1$$PHOSPHORTAGGED(Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V throws java/lang/Throwable 
   @Lorg/junit/Test;()
    L0
    L1
+    NEW edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag
+    DUP
+    INVOKESPECIAL edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.<init> ()V
+    ASTORE 2
    L2
-    LINENUMBER 21 L2
-    ALOAD 0
-    ALOAD 1
-    ICONST_2
-    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
-    DUP2_X2
-    POP2
-    POP
-    DUP_X2
-    SWAP
-    PUTFIELD edu/utexas/ece/flakytracker/FlakyTrackerTest.aPHOSPHOR_TAG : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
-    PUTFIELD edu/utexas/ece/flakytracker/FlakyTrackerTest.a : I
+    NEW edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag
+    DUP
+    INVOKESPECIAL edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag.<init> ()V
+    ASTORE 3
    L3
-    LINENUMBER 22 L3
-    RETURN
    L4
-    LOCALVARIABLE this$$PHOSPHORTAGGED Ledu/columbia/cs/psl/phosphor/runtime/Taint; L0 L4 1
-    LOCALVARIABLE this Ledu/utexas/ece/flakytracker/FlakyTrackerTest; L0 L4 0
+    LINENUMBER 26 L4
+    GETSTATIC edu/utexas/ece/flakytracker/FlakyTest.debug : Z
+    GETSTATIC edu/utexas/ece/flakytracker/FlakyTest.debugPHOSPHOR_TAG : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    POP
+    IFEQ L5
+   L6
+    LINENUMBER 27 L6
+    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;
+    GETSTATIC java/lang/System.outPHOSPHOR_TAG : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC "%n%s%n"
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    ICONST_1
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    SWAP
+    ANEWARRAY java/lang/Object
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/struct/LazyReferenceArrayObjTags.factory (Ledu/columbia/cs/psl/phosphor/runtime/Taint;[Ljava/lang/Object;)Ledu/columbia/cs/psl/phosphor/struct/LazyReferenceArrayObjTags;
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    DUP2
+    ICONST_0
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC "TestGroup100Case0.test031"
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    INVOKEVIRTUAL edu/columbia/cs/psl/phosphor/struct/LazyReferenceArrayObjTags.set (Ledu/columbia/cs/psl/phosphor/runtime/Taint;ILedu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
+    ALOAD 2
+    ACONST_NULL
+    ACONST_NULL
+    INVOKEVIRTUAL java/io/PrintStream.format$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/String;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/LazyReferenceArrayObjTags;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;[Ljava/lang/Object;Ljava/io/PrintStream;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST java/io/PrintStream
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    POP2
    L5
-    MAXSTACK = 102
-    MAXLOCALS = 2
+    LINENUMBER 28 L5
+   FRAME FULL [edu/utexas/ece/flakytracker/FlakyTest edu/columbia/cs/psl/phosphor/runtime/Taint edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag] []
+    ALOAD 2
+    ACONST_NULL
+    INVOKESTATIC java/util/concurrent/ThreadLocalRandom.current$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Ljava/util/concurrent/ThreadLocalRandom;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST java/util/concurrent/ThreadLocalRandom
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+   L7
+   L8
+   L9
+    NEW edu/utexas/ece/flakytracker/agent/FlakyTaintLabel
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    DUP2
+    LDC 1
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC "java/util/concurrent/ThreadLocalRandom.current"
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC "edu/utexas/ece/flakytracker/FlakyTest"
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC 28
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC 1
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    INVOKESPECIAL edu/utexas/ece/flakytracker/agent/FlakyTaintLabel.<init> (Ledu/columbia/cs/psl/phosphor/runtime/Taint;ILedu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/String;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/String;Ledu/columbia/cs/psl/phosphor/runtime/Taint;ILedu/columbia/cs/psl/phosphor/runtime/Taint;ILedu/columbia/cs/psl/phosphor/runtime/Taint;)V
+    ALOAD 2
+    ACONST_NULL
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/MultiTainter.taintedReference$$PHOSPHORTAGGED (Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Ljava/lang/Object;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST java/lang/Object
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    SWAP
+    CHECKCAST java/util/concurrent/ThreadLocalRandom
+    SWAP
+   L10
+    ASTORE 5
+    ASTORE 4
+   L11
+    LINENUMBER 29 L11
+    ALOAD 4
+    ALOAD 5
+    DUP2
+    SWAP
+    INSTANCEOF java/util/concurrent/ThreadLocalRandom
+    SWAP
+    POP
+    IFEQ L12
+    ALOAD 3
+    INVOKEVIRTUAL java/util/concurrent/ThreadLocalRandom.nextBoolean$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag;)Ledu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag.val : Z
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+   L13
+   L14
+   L15
+    NEW edu/utexas/ece/flakytracker/agent/FlakyTaintLabel
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    DUP2
+    LDC 1
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC "java/util/concurrent/ThreadLocalRandom.nextBoolean"
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC "edu/utexas/ece/flakytracker/FlakyTest"
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC 29
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC 2
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    INVOKESPECIAL edu/utexas/ece/flakytracker/agent/FlakyTaintLabel.<init> (Ledu/columbia/cs/psl/phosphor/runtime/Taint;ILedu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/String;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/String;Ledu/columbia/cs/psl/phosphor/runtime/Taint;ILedu/columbia/cs/psl/phosphor/runtime/Taint;ILedu/columbia/cs/psl/phosphor/runtime/Taint;)V
+    ALOAD 3
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/MultiTainter.taintedBoolean$$PHOSPHORTAGGED (ZLedu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag;)Ledu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag.val : Z
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    GOTO L16
+   L12
+   FRAME FULL [edu/utexas/ece/flakytracker/FlakyTest edu/columbia/cs/psl/phosphor/runtime/Taint edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag java/util/concurrent/ThreadLocalRandom edu/columbia/cs/psl/phosphor/runtime/Taint] [java/util/concurrent/ThreadLocalRandom edu/columbia/cs/psl/phosphor/runtime/Taint]
+    ALOAD 3
+    INVOKEVIRTUAL java/util/concurrent/ThreadLocalRandom.nextBoolean$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag;)Ledu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag.val : Z
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+   L16
+   FRAME FULL [edu/utexas/ece/flakytracker/FlakyTest edu/columbia/cs/psl/phosphor/runtime/Taint edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag edu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag java/util/concurrent/ThreadLocalRandom edu/columbia/cs/psl/phosphor/runtime/Taint] [I edu/columbia/cs/psl/phosphor/runtime/Taint]
+    ALOAD 2
+    ACONST_NULL
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/RuntimeBoxUnboxPropagator.valueOfZ$$PHOSPHORTAGGED (ZLedu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Ljava/lang/Boolean;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST java/lang/Boolean
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    LDC "ss"
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    INVOKESTATIC edu/utexas/ece/flakytracker/agent/FlakyUtil.checkTainted$$PHOSPHORTAGGED (Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/String;Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
+   L17
+    LINENUMBER 30 L17
+    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;
+    GETSTATIC java/lang/System.outPHOSPHOR_TAG : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    ALOAD 4
+    ALOAD 5
+    ALOAD 2
+    ACONST_NULL
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/MultiTainter.getTaint$$PHOSPHORTAGGED (Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Ledu/columbia/cs/psl/phosphor/runtime/Taint;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST edu/columbia/cs/psl/phosphor/runtime/Taint
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    INVOKEVIRTUAL java/io/PrintStream.println$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
+   L18
+    LINENUMBER 31 L18
+    ACONST_NULL
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+   L19
+    ASTORE 13
+    ASTORE 6
+   L20
+    LINENUMBER 32 L20
+   L21
+   L22
+   L23
+    NEW com/github/javafaker/Faker
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    DUP2
+    ALOAD 6
+    ALOAD 13
+    INVOKESPECIAL com/github/javafaker/Faker.<init> (Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/util/Random;Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
+   L24
+    ASTORE 14
+    ASTORE 7
+   L25
+    LINENUMBER 33 L25
+    ALOAD 7
+    ALOAD 14
+    ALOAD 2
+    ACONST_NULL
+    INVOKEVIRTUAL com/github/javafaker/Faker.avatar$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Lcom/github/javafaker/Avatar;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST com/github/javafaker/Avatar
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+   L26
+    ASTORE 15
+    ASTORE 8
+   L27
+    LINENUMBER 34 L27
+    ALOAD 7
+    ALOAD 14
+    ALOAD 2
+    ACONST_NULL
+    INVOKEVIRTUAL com/github/javafaker/Faker.slackEmoji$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Lcom/github/javafaker/SlackEmoji;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST com/github/javafaker/SlackEmoji
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+   L28
+    ASTORE 16
+    ASTORE 9
+   L29
+    LINENUMBER 35 L29
+    ALOAD 7
+    ALOAD 14
+    ALOAD 2
+    ACONST_NULL
+    INVOKEVIRTUAL com/github/javafaker/Faker.medical$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Lcom/github/javafaker/Medical;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST com/github/javafaker/Medical
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+   L30
+    ASTORE 17
+    ASTORE 10
+   L31
+    LINENUMBER 36 L31
+    ALOAD 7
+    ALOAD 14
+    ALOAD 2
+    ACONST_NULL
+    INVOKEVIRTUAL com/github/javafaker/Faker.university$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Lcom/github/javafaker/University;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST com/github/javafaker/University
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+   L32
+    ASTORE 18
+    ASTORE 11
+   L33
+    LINENUMBER 37 L33
+    ALOAD 11
+    ALOAD 18
+    ALOAD 2
+    ACONST_NULL
+    INVOKEVIRTUAL com/github/javafaker/University.prefix$$PHOSPHORTAGGED (Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;Ljava/lang/String;)Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag;
+    DUP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.val : Ljava/lang/Object;
+    CHECKCAST java/lang/String
+    SWAP
+    GETFIELD edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.taint : Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+   L34
+    ASTORE 19
+    ASTORE 12
+   L35
+    LINENUMBER 38 L35
+    ALOAD 8
+    ALOAD 15
+    DUP2
+    LDC "test031_1"
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    INVOKESTATIC edu/utexas/ece/flakytracker/agent/FlakyUtil.checkTainted$$PHOSPHORTAGGED (Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;Ljava/lang/String;Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
+    INVOKESTATIC org/junit/Assert.assertNotNull$$PHOSPHORTAGGED (Ljava/lang/Object;Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
+   L36
+    LINENUMBER 44 L36
+    RETURN
+   L37
+    LOCALVARIABLE this$$PHOSPHORTAGGED Ledu/columbia/cs/psl/phosphor/runtime/Taint; L0 L37 1
+   L38
+    LOCALVARIABLE avatar2$$PHOSPHORTAG Ledu/columbia/cs/psl/phosphor/runtime/Taint; L26 L38 15
+    LOCALVARIABLE current$$PHOSPHORTAG Ledu/columbia/cs/psl/phosphor/runtime/Taint; L10 L38 5
+    LOCALVARIABLE phosphorReturnPreAlloc1 Ledu/columbia/cs/psl/phosphor/struct/TaintedBooleanWithObjTag; L2 L38 3
+    LOCALVARIABLE university6$$PHOSPHORTAG Ledu/columbia/cs/psl/phosphor/runtime/Taint; L32 L38 18
+    LOCALVARIABLE medical4$$PHOSPHORTAG Ledu/columbia/cs/psl/phosphor/runtime/Taint; L30 L38 17
+    LOCALVARIABLE str7$$PHOSPHORTAG Ledu/columbia/cs/psl/phosphor/runtime/Taint; L34 L38 19
+    LOCALVARIABLE faker1$$PHOSPHORTAG Ledu/columbia/cs/psl/phosphor/runtime/Taint; L24 L38 14
+    LOCALVARIABLE slackEmoji3$$PHOSPHORTAG Ledu/columbia/cs/psl/phosphor/runtime/Taint; L28 L38 16
+    LOCALVARIABLE random0$$PHOSPHORTAG Ledu/columbia/cs/psl/phosphor/runtime/Taint; L19 L38 13
+    LOCALVARIABLE phosphorReturnPreAlloc0 Ledu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag; L1 L38 2
+    LOCALVARIABLE this Ledu/utexas/ece/flakytracker/FlakyTest; L0 L37 0
+    LOCALVARIABLE current Ljava/util/concurrent/ThreadLocalRandom; L11 L37 4
+    LOCALVARIABLE random0 Ljava/util/Random; L20 L37 6
+    LOCALVARIABLE faker1 Lcom/github/javafaker/Faker; L25 L37 7
+    LOCALVARIABLE avatar2 Lcom/github/javafaker/Avatar; L27 L37 8
+    LOCALVARIABLE slackEmoji3 Lcom/github/javafaker/SlackEmoji; L29 L37 9
+    LOCALVARIABLE medical4 Lcom/github/javafaker/Medical; L31 L37 10
+    LOCALVARIABLE university6 Lcom/github/javafaker/University; L33 L37 11
+    LOCALVARIABLE str7 Ljava/lang/String; L35 L37 12
+    MAXSTACK = 108
+    MAXLOCALS = 20
 
   // access flags 0x1
-  public test02$$PHOSPHORTAGGED(Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V
+  public test068_1$$PHOSPHORTAGGED(Ledu/columbia/cs/psl/phosphor/runtime/Taint;)V throws java/lang/Throwable 
+  @Lorg/junit/Test;()
+   L0
+   L1
+    NEW edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag
+    DUP
+    INVOKESPECIAL edu/columbia/cs/psl/phosphor/struct/TaintedReferenceWithObjTag.<init> ()V
+    ASTORE 2
+   L2
+   L3
+    LINENUMBER 67 L3
+   L4
+   L5
+   L6
+   L7
+    NEW edu/columbia/cs/psl/phosphor/struct/harmony/util/StringBuilder
+    INVOKESTATIC edu/columbia/cs/psl/phosphor/runtime/Taint.emptyTaint ()Ledu/columbia/cs/psl/phosphor/runtime/Taint;
+    DUP2
+    INVOKESPECIAL edu/columbia/cs/psl/phosphor/struct/harmony/util/StringBuilder.<init> ()V
+   L8
+    ASTORE 4
+    ASTORE 3

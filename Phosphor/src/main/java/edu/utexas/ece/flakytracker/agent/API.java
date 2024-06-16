@@ -19,12 +19,25 @@ public class API {
     String returnType;
 
     String ASMreturType;
+
+    int flakyType;
+
+
     public API(String owner, String name, String descriptor) {
         this.owner = owner;
         this.name = name;
         this.descriptor = descriptor;
         this.returnType = API.getReturnType(descriptor);
         this.ASMreturType = API.getASMreturType(descriptor);
+    }
+
+    public API(String owner, String name, String descriptor, int flakyType) {
+        this.owner = owner;
+        this.name = name;
+        this.descriptor = descriptor;
+        this.returnType = API.getReturnType(descriptor);
+        this.ASMreturType = API.getASMreturType(descriptor);
+        this.flakyType = flakyType;
     }
 
     public static String getASMreturType(String descriptor) {

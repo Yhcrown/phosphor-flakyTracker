@@ -2,12 +2,19 @@ package edu.utexas.ece.flakytracker;
 import com.github.edgar615.util.base.Randoms;
 import com.google.common.base.Preconditions;
 import edu.utexas.ece.flakytracker.agent.API;
+import edu.utexas.ece.flakytracker.agent.FlakyClassTracer;
 import edu.utexas.ece.flakytracker.agent.FlakyUtil;
+import org.apache.commons.io.FileUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import edu.columbia.cs.psl.phosphor.runtime.MultiTainter;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 // import flaky.FlakyUtil;
@@ -24,8 +31,7 @@ public class FlakyTest {
         if (debug)
             System.out.format("%n%s%n", "TestGroup100Case0.test031");
         ThreadLocalRandom current = ThreadLocalRandom.current();
-        FlakyUtil.checkTainted(current.nextBoolean(),"ss");
-        System.out.println(MultiTainter.getTaint(current));
+
         java.util.Random random0 = null;
         com.github.javafaker.Faker faker1 = new com.github.javafaker.Faker(random0);
         com.github.javafaker.Avatar avatar2 = faker1.avatar();
@@ -38,42 +44,84 @@ public class FlakyTest {
         org.junit.Assert.assertNotNull(medical4);
         org.junit.Assert.assertNotNull(university6);
         org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Eastern" + "'", str7, "Eastern");
-    }
 
+    }
+    @Test
+    public void testStringBuilder() {
+        java.lang.String str1 = Randoms.randomAlphabet((int) '4');
+        StringBuilder stringBuilder = new StringBuilder(str1);
+        StringBuilder nonTaintedStringBuilder = new StringBuilder("nothing");
+
+//        FlakyUtil.checkTainted(str1,"haha");
+//        FlakyUtil.checkTainted(stringBuilder,"strbuilder1");
+        org.junit.Assert.assertEquals("'" + str1 + "' != '" + "kFTkErtzJWZnsEgqxfNtJKPQjwPUVInUodtzvFAVDXzsdzxnhHhm" + "'", str1, "kFTkErtzJWZnsEgqxfNtJKPQjwPUVInUodtzvFAVDXzsdzxnhHhm");
+  }
     @Test
     public void test068_1() throws Throwable {
-//        if (debug)
-//            System.out.format("%n%s%n", "TestGroup100Case0.test068");
-//        String base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-//        int len = '4';
+        if (debug)
+            System.out.format("%n%s%n", "TestGroup100Case0.test068");
+        String base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        int len = '4';
         java.lang.String str1 = Randoms.randomAlphabet((int) '4');
-//        Preconditions.checkNotNull(base);
-//        StringBuilder sb = new StringBuilder(len);
-//        ThreadLocalRandom random = ThreadLocalRandom.current();
-//        int y = random.nextInt();
-//        final Random temp = new Random();
-//        double z = temp.nextGaussian();
-//        FlakyUtil.checkTainted(temp,"random");
-//        FlakyUtil.checkTainted(random,"Threadrandom");
-//        FlakyUtil.checkTainted(y,"nextinty");
-//        FlakyUtil.checkTainted(z,"nextintz");
+        FlakyUtil.checkTainted(str1.equals(str1),"hahaniubi");
+        Preconditions.checkNotNull(base);
+        StringBuilder sb = new StringBuilder(len);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int y = random.nextInt(len);
+        final Random temp = new Random();
+        double z = temp.nextGaussian();
+        FlakyUtil.checkTainted(temp,"random");
+        FlakyUtil.checkTainted(random,"Threadrandom");
+        FlakyUtil.checkTainted(y,"nextinty");
+        FlakyUtil.checkTainted(z,"nextintz");
+        char c = base.charAt(y);
+        System.out.println(c);
+        sb.append("nothing");
+
+        StringBuilder append = sb.append("a");
 //
-////        FlakyUtil.checkTainted(new FactoryTest().getvalue(),"getvalue2");
-//
-//
-//        System.out.println(MultiTainter.getTaint(y));
-//
-//
-//
-//        int range = base.length();
-//
-//        for(int i = 0; i < len; ++i) {
-//            sb.append(base.charAt(random.nextInt(range)));
-//        }
-//        String str1 = sb.toString();
-        FlakyUtil.checkTainted(str1,"ss");
-        org.junit.Assert.assertEquals("'" + str1 + "' != '" + "kFTkErtzJWZnsEgqxfNtJKPQjwPUVInUodtzvFAVDXzsdzxnhHhm" + "'", str1, "kFTkErtzJWZnsEgqxfNtJKPQjwPUVInUodtzvFAVDXzsdzxnhHhm");
+        FlakyUtil.checkTainted(sb,"append");
+        char[] values = new char[10];
+        values[1] = c;
+        FlakyUtil.checkTainted(c,"charat");
+        char[] newValues = Arrays.copyOf(values,100);
+        FlakyUtil.checkTainted(sb.charAt(0),"values");
+        FlakyUtil.checkTainted(sb.toString().charAt(0),"toString");
+        boolean b = sb.toString().equals("b");
+        FlakyUtil.checkTainted(b,"boolean");
+        sb.toString();
+        char cor = 'c';
+        char cccc = MultiTainter.taintedChar(cor,"c");
+        FlakyUtil.checkTainted( MultiTainter.taintedChar(cor,"c"),"cccc");
+        StringBuilder buf = new StringBuilder();
+        buf.append(cccc);
+        FlakyUtil.checkTainted(sb,"buf");
+
+
+//        FlakyUtil.checkTainted(new FactoryTest().getvalue(),"getvalue2");
+
+
+        System.out.println(MultiTainter.getTaint(y));
+
+
+
+        int range = base.length();
+        FlakyUtil.checkTainted(random.nextInt(range),"nextintrange");
+//        FlakyUtil.checkTainted(base.charAt(random.nextInt(range)),"basecharat");
+        for(int i = 0; i < len; ++i) {
+            sb.append(base.charAt(random.nextInt(range)));
+        }
+//        FlakyUtil.checkTainted(sb.charAt(1),"charat0");
+        str1 = sb.toString();
+        System.out.println("kFTkErtzJWZnsEgqxfNtJKPQjwPUVInUodtzvFAVDXzsdzxnhHm".length());
+        System.out.println(str1.length());
+        FlakyUtil.checkTainted(sb,"sb");
+        new StringBuilder(str1.length());
+//        FlakyUtil.checkTainted(str1.equals(new String()),"ss");
+//        org.junit.Assert.assertEquals("'" + str1 + "' != '" + "kFTkErtzJWZnsEgqxfNtJKPQjwPUVInUodtzvFAVDXzsdzxnhHhm" + "'", str1, "kFTkErtzJWZnsEgqxfNtJKPQjwPUVInUodtzvFAVDXzsdzxnhHhm");
     }
+
+
 //    @Test
 //    public void test045() throws Throwable {
 ////        if (debug)

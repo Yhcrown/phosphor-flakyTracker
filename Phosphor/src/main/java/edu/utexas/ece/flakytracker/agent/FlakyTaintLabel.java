@@ -10,6 +10,16 @@ public class FlakyTaintLabel {
 
     static final int STATIC = 3;
 
+    static final int TIME = 4;
+
+    static final int HASHCODE = 5;
+
+    static final int RESOURCE = 6;
+
+    static final int ENVIRONMENT = 7;
+
+    static final int NETWORK = 8;
+
     int type;
     String cause;
 
@@ -22,7 +32,7 @@ public class FlakyTaintLabel {
 //    static int index = 0;
 
 
-    public FlakyTaintLabel(int type, String cause, String file,int line, int label) {
+    public FlakyTaintLabel(int type, String cause, String file, int line, int label) {
         this.type = type;
         this.cause = cause;
         this.file = file;
@@ -78,6 +88,17 @@ public class FlakyTaintLabel {
                 return "FIELD";
             case STATIC:
                 return "STATIC";
+            case TIME:
+                return "TIME";
+            case HASHCODE:
+                return "HASHCODE";
+            case RESOURCE:
+                return "RESOURCE";
+            case ENVIRONMENT:
+                return "ENVIRONMENT";
+            case NETWORK:
+                return "NETWORK";
+
         }
         return null;
     }
@@ -93,15 +114,13 @@ public class FlakyTaintLabel {
                 '}';
     }
 
-    public void addWhiteList(String testName){
+    public void addWhiteList(String testName) {
         whiteList.add(testName);
     }
 
-    public boolean isInWhiteList(String testName){
+    public boolean isInWhiteList(String testName) {
         return whiteList.contains(testName);
     }
-
-
 
 
 }

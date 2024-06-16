@@ -9,48 +9,97 @@ import org.objectweb.asm.ClassWriter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class FlakyUtil {
 
     static Set<String> logHistory = new HashSet<>();
 
 
-    public static <T> void checkTainted(T a, String testName) {
-        if (a == null)
+    public static <T> void checkTainted(T input, String testName) {
+        if (input == null)
             return;
-        Taint taint = MultiTainter.getTaint(a);
-        if (taint == null)
+
+        Set<Object> labels = getTaintLabels(input);
+
+        if (labels.isEmpty()) {
             return;
-        for (Object label : taint.getLabels()) {
+        }
+        for (Object label : labels) {
             if (label instanceof FlakyTaintLabel) {
                 FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;
-
                 if (!taintLabel.isInWhiteList(testName)) {
                     String log = testName + " may be flaky: " + taintLabel.toString();
                     if (!logHistory.contains(log)) {
-                        System.out.println(log);
+                        if (taintLabel.getType() != FlakyTaintLabel.STATIC) //TODO: too many false negative on static
+                            System.out.println(log);
                         logHistory.add(log);
                     }
                 }
+            } else {
+                System.out.println(label);
             }
         }
     }
 
+    static <T> Set<Object>  getTaintLabels(T input){
 
-    public static <T> void addWhiteList(T a, String testName) {
-//        System.out.println("come in white");
-        Taint taint = MultiTainter.getTaint(a);
-        for (Object label : taint.getLabels()) {
+        Object[] objectArray = null;
+        if (input.getClass().isArray()) {
+            int length = Array.getLength(input);
+            objectArray = new Object[length];
+            for (int i = 0; i < length; i++) {
+                objectArray[i] = Array.get(input, i);
+            }
+        }
+//        objectArray.
+        Set<Object> labels = new HashSet<>();
+        if (objectArray != null) {
+            for (Object taint : objectArray) {
+                if (taint instanceof String)
+                    getTaintLabelsOnString(labels, (String) taint);
+                else if (taint instanceof StringBuilder)
+                    getTaintLabelsOnStringBuilder(labels, (StringBuilder) taint);
+                else
+                    labels.addAll(Arrays.asList(MultiTainter.getTaint(taint).getLabels()));
+            }
+        } else {
+            if (input instanceof String)
+                getTaintLabelsOnString(labels, (String) input);
+            else if (input instanceof StringBuilder)
+                getTaintLabelsOnStringBuilder(labels, (StringBuilder) input);
+            labels.addAll(Arrays.asList(MultiTainter.getTaint(input).getLabels()));
+        }
+        return labels;
+    }
+
+    static void getTaintLabelsOnString(Set<Object> labels, String s) {
+        for (int i = 0; i < s.length(); i++) {
+            labels.addAll(Arrays.asList(MultiTainter.getTaint(s.charAt(i)).getLabels()));
+        }
+    }
+
+    static void getTaintLabelsOnStringBuilder(Set<Object> labels, StringBuilder s) {
+        for (int i = 0; i < s.length(); i++) {
+            labels.addAll(Arrays.asList(MultiTainter.getTaint(s.charAt(i)).getLabels()));
+        }
+    }
+
+
+    public static <T> void addWhiteList(T input, String testName) {
+        if (input == null)
+            return;
+       Object[] labels = MultiTainter.getTaint(input).getLabels();
+        for (Object label : labels) {
             if (label instanceof FlakyTaintLabel) {
                 FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;
-                if ("STATIC".equals(taintLabel.getStringType()) || "FIELD".equals(taintLabel.getStringType())){
+                if ("STATIC".equals(taintLabel.getStringType()) || "FIELD".equals(taintLabel.getStringType())) {
                     taintLabel.addWhiteList(testName);
                 }
             }
         }
+
     }
 
 //    public static void main(String[] args) throws IOException {
