@@ -2,6 +2,7 @@ package edu.utexas.ece.flakytracker;
 
 import com.google.common.base.Preconditions;
 import com.mifmif.common.regex.Generex;
+import edu.columbia.cs.psl.phosphor.instrumenter.ClinitRetransformClassVisitor;
 import edu.columbia.cs.psl.phosphor.runtime.MultiTainter;
 import edu.utexas.ece.flakytracker.agent.FlakyClassTracer;
 import edu.utexas.ece.flakytracker.agent.FlakyTaintLabel;
@@ -15,6 +16,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.Printer;
 import org.objectweb.asm.util.Textifier;
@@ -80,36 +82,52 @@ public class FlakyTrackerTest {
     }
 
 
-    @Test
-    public void parseClassFile() throws IOException {
-//        API.getParamTypes("Ljava/io/PrintStream;");
-        String className = "com.github.edgar615.util.base.Randoms";
-//        Generex
-        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
-        boolean asmCode = true;
+//    @Test
+//    public void parseClassFile() throws IOException {
+////        API.getParamTypes("Ljava/io/PrintStream;");
+//        String className = "edu.utexas.ece.flakytracker.FlakyTrackerTest";
+////        Generex
+//        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
+//        boolean asmCode = true;
+//
+////                Printer printer = asmCode ? new ASMifier() : new Textifier();
+////                PrintWriter printWriter = new PrintWriter(System.out, true);
+////                TraceClassVisitor traceClassVisitor = new TraceClassVisitor(null, printer, printWriter);
+////                new ClassReader(className).accept(traceClassVisitor, parsingOptions);
+//
+//        // 读取.class文件
+////        File classFile = new File("C:\\Users\\yhcro\\IdeaProjects\\FlakyTracker\\DiUS-java-faker\\target\\test-classes\\flaky\\FlakyTest.class");
+////        InputStream inputStream = new FileInputStream(classFile);
+//
+//        // 创建ClassReader
+////        ClassReader reader = new ClassReader(inputStream);
+//        ClassReader reader = new ClassReader(className);
+//
+//        //        final ClassReader reader = new ClassReader(bytes);
+//        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
+////        FlakyClassTracer visitor = new FlakyClassTracer(writer);
+////        ClassNode visitor = new ClassNode(writer);
+//        ClinitRetransformClassVisitor visitor = new ClinitRetransformClassVisitor(writer);
+//        reader.accept(visitor, 0);
+//        System.out.println(visitor);
+//
+//        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
+//
+//    }
 
-//                Printer printer = asmCode ? new ASMifier() : new Textifier();
-//                PrintWriter printWriter = new PrintWriter(System.out, true);
-//                TraceClassVisitor traceClassVisitor = new TraceClassVisitor(null, printer, printWriter);
-//                new ClassReader(className).accept(traceClassVisitor, parsingOptions);
 
-        // 读取.class文件
-//        File classFile = new File("C:\\Users\\yhcro\\IdeaProjects\\FlakyTracker\\DiUS-java-faker\\target\\test-classes\\flaky\\FlakyTest.class");
-//        InputStream inputStream = new FileInputStream(classFile);
-
-        // 创建ClassReader
-//        ClassReader reader = new ClassReader(inputStream);
-        ClassReader reader = new ClassReader(className);
-
-        //        final ClassReader reader = new ClassReader(bytes);
-        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
-        FlakyClassTracer visitor = new FlakyClassTracer(writer);
-        reader.accept(visitor, 0);
-
-        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
-
-//////         System.out.println
-    }
+//    @Test
+//    public void parseClassFile() throws IOException {
+//        String className = "net.landzero.xlog.mybatis.TrackEventBuilder";
+//        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
+//        boolean asmCode = true;
+//        ClassReader reader = new ClassReader(className);
+//        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
+//        FlakyClassTracer visitor = new FlakyClassTracer(writer);
+//        reader.accept(visitor, 0);
+//        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
+//
+//    }
 
     @Test
     public void parseASMFile() throws IOException{
@@ -143,5 +161,28 @@ public class FlakyTrackerTest {
         else
             System.out.println("hagepi");
 
+    }
+
+    @Test
+    public void test078_1() throws Throwable {
+//        if (debug)
+//            System.out.format("%n%s%n", "TestGroup100Case0.test078");
+        System.out.println(System.currentTimeMillis());
+        java.lang.String str0 = net.landzero.xlog.XLog.crid();
+        org.junit.Assert.assertEquals("'" + str0 + "' != '" + "-" + "'", str0, "-");
+    }
+    @Test
+    public void test075_1() throws Throwable {
+//        if (debug)
+//            System.out.format("%n%s%n", "TestGroup100Case0.test075");
+        net.landzero.xlog.mybatis.TrackEventBuilder trackEventBuilder0 = new net.landzero.xlog.mybatis.TrackEventBuilder();
+        trackEventBuilder0.commit();
+        net.landzero.xlog.mybatis.TrackEvent trackEvent2 = trackEventBuilder0.build();
+        trackEvent2.setError("DIGEST");
+        long long5 = trackEvent2.getDuration();
+        java.lang.String str6 = trackEvent2.getMethod();
+        org.junit.Assert.assertNotNull(trackEvent2);
+        org.junit.Assert.assertTrue("'" + long5 + "' != '" + 1L + "'", long5 == 1L);
+        org.junit.Assert.assertNull(str6);
     }
 }

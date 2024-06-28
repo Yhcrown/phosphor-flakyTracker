@@ -106,7 +106,7 @@ public class FlakyClassTracer extends ClassVisitor {
 
         API GetLocalHost = new API("java/net/InetAddress","getLocalHost","()Ljava/net/InetAddress;",FlakyTaintLabel.ENVIRONMENT);
 //        Socket
-
+//System.currentTimeMillis()
 
 //        API
         //        System.getenv()
@@ -153,7 +153,7 @@ public class FlakyClassTracer extends ClassVisitor {
         API DateClass = new API("java/util/Date","","()V",FlakyTaintLabel.TIME);
         API RandomClass = new API("java/util/Random", "", "()V",FlakyTaintLabel.RANDOM);
         API ThreadLocalRandomClass = new API("java/util/concurrent/ThreadLocalRandom", "java/util/Random", "()V", FlakyTaintLabel.RANDOM);
-        nonDeterministicClass.addAll(Arrays.asList(RandomClass, ThreadLocalRandomClass));
+        nonDeterministicClass.addAll(Arrays.asList(RandomClass, ThreadLocalRandomClass,DateClass));
 
         allAPINeedToBeTainted.addAll(Arrays.asList(ThreadLocalRandomClass));
 
@@ -611,7 +611,7 @@ public class FlakyClassTracer extends ClassVisitor {
                     super.visitLdcInsn(getLabelIndex()); //label
                     super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
                     callTaintedMethod(descriptor);
-//                    super.visitTypeInsn(CHECKCAST, "Integer");
+
 
                     super.visitJumpInsn(GOTO,end);
 
@@ -621,7 +621,7 @@ public class FlakyClassTracer extends ClassVisitor {
 
                     super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
 
-//                    super.visitJumpInsn(GOTO,end);
+
                     super.visitLabel(end);
 
 
@@ -644,9 +644,9 @@ public class FlakyClassTracer extends ClassVisitor {
                     super.visitLdcInsn(getLabelIndex()); //label
                     super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
                     callTaintedMethod(descriptor);
-
-                    super.visitTypeInsn(CHECKCAST, api.ASMreturType);
-
+                    if (!API.isPrimitiveType(api.returnType))
+                        super.visitTypeInsn(CHECKCAST, api.ASMreturType);
+                    return;
                 }
             }
 
@@ -672,4 +672,4 @@ public class FlakyClassTracer extends ClassVisitor {
 
         }
     }
-}
+ }
