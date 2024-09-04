@@ -20,6 +20,8 @@ public class API {
 
     String ASMreturType;
 
+
+
     int flakyType;
 
 
@@ -105,6 +107,14 @@ public class API {
 
     public String getDescriptor() {
         return descriptor;
+    }
+
+    public int getFlakyType() {
+        return flakyType;
+    }
+
+    public void setFlakyType(int flakyType) {
+        this.flakyType = flakyType;
     }
 
 

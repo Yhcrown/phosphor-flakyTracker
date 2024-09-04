@@ -30,7 +30,7 @@ public class FlakyUtil {
             if (label instanceof FlakyTaintLabel) {
                 FlakyTaintLabel taintLabel = (FlakyTaintLabel) label;
                 if (!taintLabel.isInWhiteList(testName)) {
-                    String log = testName + " may be flaky: " + taintLabel.toString();
+                    String log = "FlakyTracker Log: " + testName + " may be flaky: " + taintLabel.toString();
                     if (!logHistory.contains(log)) {
                         if (taintLabel.getType() != FlakyTaintLabel.STATIC) //TODO: too many false negative on static
                             System.out.println(log);

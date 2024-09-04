@@ -350,7 +350,7 @@ public class FlakyClassTracer extends ClassVisitor {
                     if (("L" + clazz.getOwner() + ";").equals(descriptor)) {
                         super.visitTypeInsn(NEW, taintClassLabel);
                         super.visitInsn(DUP);
-                        super.visitLdcInsn(FlakyTaintLabel.RANDOM);
+                        super.visitLdcInsn(clazz.getFlakyType());
                         super.visitLdcInsn(owner + "." + name);
                         super.visitLdcInsn(className);
                         super.visitLdcInsn(lineNumber);
@@ -654,7 +654,7 @@ public class FlakyClassTracer extends ClassVisitor {
                 if (opcode == INVOKESPECIAL && clazz.getOwner().equals(owner) && "<init>".equals(name)) {
                     super.visitTypeInsn(NEW, taintClassLabel);
                     super.visitInsn(DUP);
-                    super.visitLdcInsn(FlakyTaintLabel.RANDOM);
+                    super.visitLdcInsn(clazz.getFlakyType());
                     super.visitLdcInsn(owner + "." + name);
                     super.visitLdcInsn(className);
                     super.visitLdcInsn(lineNumber);

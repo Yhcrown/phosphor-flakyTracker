@@ -80,7 +80,11 @@ public class FlakyTrackerTest {
         org.junit.Assert.assertTrue("'" + long4 + "' != '" + 62L + "'", long4 == 62L);
 
     }
-
+    @Test
+    public void test113_1() throws Throwable {
+        java.security.PrivateKey privateKey0 = lich.tool.encryptionAndDecryption.core.Base.getRootGMPrivateKey();
+        org.junit.Assert.assertNull(privateKey0);
+    }
 
 //    @Test
 //    public void parseClassFile() throws IOException {
@@ -163,26 +167,26 @@ public class FlakyTrackerTest {
 
     }
 
-    @Test
-    public void test078_1() throws Throwable {
-//        if (debug)
-//            System.out.format("%n%s%n", "TestGroup100Case0.test078");
-        System.out.println(System.currentTimeMillis());
-        java.lang.String str0 = net.landzero.xlog.XLog.crid();
-        org.junit.Assert.assertEquals("'" + str0 + "' != '" + "-" + "'", str0, "-");
-    }
-    @Test
-    public void test075_1() throws Throwable {
-//        if (debug)
-//            System.out.format("%n%s%n", "TestGroup100Case0.test075");
-        net.landzero.xlog.mybatis.TrackEventBuilder trackEventBuilder0 = new net.landzero.xlog.mybatis.TrackEventBuilder();
-        trackEventBuilder0.commit();
-        net.landzero.xlog.mybatis.TrackEvent trackEvent2 = trackEventBuilder0.build();
-        trackEvent2.setError("DIGEST");
-        long long5 = trackEvent2.getDuration();
-        java.lang.String str6 = trackEvent2.getMethod();
-        org.junit.Assert.assertNotNull(trackEvent2);
-        org.junit.Assert.assertTrue("'" + long5 + "' != '" + 1L + "'", long5 == 1L);
-        org.junit.Assert.assertNull(str6);
-    }
+//    @Test
+//    public void test078_1() throws Throwable {
+////        if (debug)
+////            System.out.format("%n%s%n", "TestGroup100Case0.test078");
+//        System.out.println(System.currentTimeMillis());
+//        java.lang.String str0 = net.landzero.xlog.XLog.crid();
+//        org.junit.Assert.assertEquals("'" + str0 + "' != '" + "-" + "'", str0, "-");
+//    }
+//    @Test
+//    public void test075_1() throws Throwable {
+////        if (debug)
+////            System.out.format("%n%s%n", "TestGroup100Case0.test075");
+//        net.landzero.xlog.mybatis.TrackEventBuilder trackEventBuilder0 = new net.landzero.xlog.mybatis.TrackEventBuilder();
+//        trackEventBuilder0.commit();
+//        net.landzero.xlog.mybatis.TrackEvent trackEvent2 = trackEventBuilder0.build();
+//        trackEvent2.setError("DIGEST");
+//        long long5 = trackEvent2.getDuration();
+//        java.lang.String str6 = trackEvent2.getMethod();
+//        org.junit.Assert.assertNotNull(trackEvent2);
+//        org.junit.Assert.assertTrue("'" + long5 + "' != '" + 1L + "'", long5 == 1L);
+//        org.junit.Assert.assertNull(str6);
+//    }
 }
