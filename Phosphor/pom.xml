@@ -142,9 +142,15 @@
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.github.819548945/tool.encryptionAndDecryption.core -->
         <dependency>
-            <groupId>com.github.819548945</groupId>
-            <artifactId>tool.encryptionAndDecryption.core</artifactId>
-            <version>0.1.8</version>
+            <groupId>com.kestreldigital.conjuror</groupId>
+            <artifactId>conjuror</artifactId>
+            <version>1.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>hu.chengming</groupId>
+            <artifactId>In-Memory-Counter</artifactId>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
@@ -208,12 +214,6 @@
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
             <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.edgar615</groupId>
-            <artifactId>util</artifactId>
-            <version>1.1.2</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>

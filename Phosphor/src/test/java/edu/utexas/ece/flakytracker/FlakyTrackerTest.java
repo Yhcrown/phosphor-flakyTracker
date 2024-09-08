@@ -1,6 +1,6 @@
 package edu.utexas.ece.flakytracker;
 
-import com.google.common.base.Preconditions;
+
 import com.mifmif.common.regex.Generex;
 import edu.columbia.cs.psl.phosphor.instrumenter.ClinitRetransformClassVisitor;
 import edu.columbia.cs.psl.phosphor.runtime.MultiTainter;
@@ -76,14 +76,18 @@ public class FlakyTrackerTest {
             // Expected exception.
 
         }
+        FlakyUtil.checkTainted(long4,"a");
+        FlakyUtil.checkTainted("'" + long4 + "' != '" + 62L + "'","string");
+
+
 
         org.junit.Assert.assertTrue("'" + long4 + "' != '" + 62L + "'", long4 == 62L);
 
     }
     @Test
     public void test113_1() throws Throwable {
-        java.security.PrivateKey privateKey0 = lich.tool.encryptionAndDecryption.core.Base.getRootGMPrivateKey();
-        org.junit.Assert.assertNull(privateKey0);
+//        java.security.PrivateKey privateKey0 = lich.tool.encryptionAndDecryption.core.Base.getRootGMPrivateKey();
+//        org.junit.Assert.assertNull(privateKey0);
     }
 
 //    @Test
@@ -109,9 +113,9 @@ public class FlakyTrackerTest {
 //
 //        //        final ClassReader reader = new ClassReader(bytes);
 //        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
-////        FlakyClassTracer visitor = new FlakyClassTracer(writer);
+//        FlakyClassTracer visitor = new FlakyClassTracer(writer);
 ////        ClassNode visitor = new ClassNode(writer);
-//        ClinitRetransformClassVisitor visitor = new ClinitRetransformClassVisitor(writer);
+////        ClinitRetransformClassVisitor visitor = new ClinitRetransformClassVisitor(writer);
 //        reader.accept(visitor, 0);
 //        System.out.println(visitor);
 //
@@ -120,23 +124,24 @@ public class FlakyTrackerTest {
 //    }
 
 
-//    @Test
-//    public void parseClassFile() throws IOException {
-//        String className = "net.landzero.xlog.mybatis.TrackEventBuilder";
-//        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
-//        boolean asmCode = true;
-//        ClassReader reader = new ClassReader(className);
-//        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
-//        FlakyClassTracer visitor = new FlakyClassTracer(writer);
-//        reader.accept(visitor, 0);
-//        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
-//
-//    }
+    @Test
+    public void parseClassFile() throws IOException {
+        String className =  "dk.brics.automaton.RegExp";
+        className = "edu.utexas.ece.flakytracker.FlakyTrackerTest";
+        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
+        boolean asmCode = true;
+        ClassReader reader = new ClassReader(className);
+        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
+        FlakyClassTracer visitor = new FlakyClassTracer(writer);
+        reader.accept(visitor, 0);
+        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
+
+    }
 
     @Test
     public void parseASMFile() throws IOException{
         String className = "com.github.edgar615.util.base.Randoms";
-        className = "edu.utexas.ece.flakytracker.FlakyTrackerTest";
+        className = "dk.brics.automaton.RegExp";
 //        FlakyDemo.noninitial = 1;
         int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
         boolean asmCode = true;
@@ -167,6 +172,12 @@ public class FlakyTrackerTest {
 
     }
 
+    @Test
+    public void example(){
+        int i = Runtime.getRuntime().availableProcessors();
+        Assert.assertEquals(i,20);
+    }
+
 //    @Test
 //    public void test078_1() throws Throwable {
 ////        if (debug)
@@ -189,4 +200,57 @@ public class FlakyTrackerTest {
 //        org.junit.Assert.assertTrue("'" + long5 + "' != '" + 1L + "'", long5 == 1L);
 //        org.junit.Assert.assertNull(str6);
 //    }
+@Test
+public void test078_1() throws Throwable {
+    com.kestreldigital.conjuror.Conjuror conjuror0 = new com.kestreldigital.conjuror.Conjuror();
+//    java.lang.String str1 = conjuror0.conjureFirstName();
+    java.util.Date date4 = conjuror0.conjureBirthDate((int) (short) 0, (int) ' ');
+//    java.lang.String str5 = conjuror0.conjureLastName();
+//    java.lang.String str7 = conjuror0.conjureString("Hurst");
+    Generex generex = new Generex("regex");
+//    java.util.Date date10 = conjuror0.conjureBirthDate((int) (short) 100, (int) (short) 1);
+// flaky "12) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals("'" + str1 + "' != '" + "Roger" + "'", str1, "Roger");
+    org.junit.Assert.assertNotNull(date4);
+//// flaky "11) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals(date4.toString(), "Thu Jan 07 15:38:01 GMT 1993");
+//    org.junit.Assert.assertEquals("'" + str5 + "' != '" + "Parry" + "'", str5, "Parry");
+//    org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Hurst" + "'", str7, "Hurst");
+//    org.junit.Assert.assertNotNull(date10);
+// flaky "7) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals(date10.toString(), "Sat Jun 27 01:25:49 GMT 1936");
+}
+    @Test
+    public void test014_1() throws Throwable {
+
+        com.kestreldigital.conjuror.Conjuror conjuror0 = new com.kestreldigital.conjuror.Conjuror();
+        java.lang.String str1 = conjuror0.conjureFirstName();
+        java.lang.String str2 = conjuror0.conjureLastName();
+        java.lang.String str3 = conjuror0.conjureFirstName();
+        java.util.Date date6 = conjuror0.conjureBirthDate((int) (byte) 100, 100);
+        java.lang.Class<?> wildcardClass7 = conjuror0.getClass();
+        org.junit.Assert.assertEquals("'" + str1 + "' != '" + "Paul" + "'", str1, "Paul");
+// flaky "10) test014(TestGroup100Case0)":         org.junit.Assert.assertEquals("'" + str2 + "' != '" + "Sayer" + "'", str2, "Sayer");
+// flaky "7) test014(TestGroup100Case0)":         org.junit.Assert.assertEquals("'" + str3 + "' != '" + "Kamran" + "'", str3, "Kamran");
+        org.junit.Assert.assertNotNull(date6);
+// flaky "6) test014(TestGroup100Case0)":         org.junit.Assert.assertEquals(date6.toString(), "Tue Aug 26 08:12:14 GMT 1924");
+        org.junit.Assert.assertNotNull(wildcardClass7);
+    }
+
+    @Test
+    public void test086_1() throws Throwable {
+        hu.chengming.util.client.InMemoryCounterPersistClient inMemoryCounterPersistClient0 = null;
+        hu.chengming.util.InMemoryCounter<java.lang.CharSequence> charSequenceInMemoryCounter4 = new hu.chengming.util.InMemoryCounter<java.lang.CharSequence>(inMemoryCounterPersistClient0, (long) '#', 1L, (long) (byte) -1);
+        long long6 = charSequenceInMemoryCounter4.increment((java.lang.CharSequence) "");
+        long long9 = charSequenceInMemoryCounter4.increment((java.lang.CharSequence) "", (long) '4');
+        long long11 = charSequenceInMemoryCounter4.increment((java.lang.CharSequence) "");
+        long long13 = charSequenceInMemoryCounter4.increment((java.lang.CharSequence) "hi!");
+        long long15 = charSequenceInMemoryCounter4.increment((java.lang.CharSequence) "hi!");
+        long long17 = charSequenceInMemoryCounter4.increment((java.lang.CharSequence) "hi!");
+        long long19 = charSequenceInMemoryCounter4.increment((java.lang.CharSequence) "");
+        org.junit.Assert.assertTrue("'" + long6 + "' != '" + 1L + "'", long6 == 1L);
+        org.junit.Assert.assertTrue("'" + long9 + "' != '" + 53L + "'", long9 == 53L);
+        org.junit.Assert.assertTrue("'" + long11 + "' != '" + 54L + "'", long11 == 54L);
+        org.junit.Assert.assertTrue("'" + long13 + "' != '" + 1L + "'", long13 == 1L);
+        org.junit.Assert.assertTrue("'" + long15 + "' != '" + 2L + "'", long15 == 2L);
+        org.junit.Assert.assertTrue("'" + long17 + "' != '" + 3L + "'", long17 == 3L);
+        org.junit.Assert.assertTrue("'" + long19 + "' != '" + 55L + "'", long19 == 55L);
+    }
 }

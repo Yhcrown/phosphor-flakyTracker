@@ -111,7 +111,6 @@ public class FlakyClassTracer extends ClassVisitor {
 //        API
         //        System.getenv()
 
-        // API nextLong = new API("java/util/Random", "nextLong", "()L");
         nonDeterministicAPI.addAll(Arrays.asList(
                 ThreadLocalCurrent,
                 hashCode,
@@ -167,7 +166,6 @@ public class FlakyClassTracer extends ClassVisitor {
         API assertThat = new API("org/junit/Assert", "assertThat", "()V");
         API assertTrue = new API("org/junit/Assert", "assertTrue", "()V");
         API assertFalse = new API("org/junit/Assert", "assertFalse", "()V");
-//        trackAPI.addAll(Arrays.asList(assertEquals));
         trackAPI.addAll(Arrays.asList(assertEquals, assertNotEquals, assertNotNull, assertNull, assertNotEquals, assertSame, assertNotSame, assertThat, assertTrue, assertFalse));
     }
 
