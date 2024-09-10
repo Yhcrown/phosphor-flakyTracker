@@ -100,12 +100,12 @@
                                 </goals>
                             </execution>
                         </executions>
-						<configuration>
-							<gpgArguments>
-								<arg>--pinentry-mode</arg>
-								<arg>loopback</arg>
-							</gpgArguments>
-						</configuration>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -151,6 +151,42 @@
             <groupId>hu.chengming</groupId>
             <artifactId>In-Memory-Counter</artifactId>
             <version>1.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.externalsortinginjava</groupId>
+            <artifactId>externalsortinginjava</artifactId>
+            <version>0.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dataone</groupId>
+            <artifactId>d1_cn_common</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.apifortress</groupId>
+            <artifactId>apif-faker</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dataone</groupId>
+            <artifactId>d1_common_java</artifactId>
+            <version>2.3.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>1.6.5.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>dk.brics</groupId>
+            <artifactId>automaton</artifactId>
+            <version>1.12-4-test</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>

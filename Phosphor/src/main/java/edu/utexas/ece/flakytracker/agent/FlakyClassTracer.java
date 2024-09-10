@@ -62,7 +62,7 @@ public class FlakyClassTracer extends ClassVisitor {
 //        API nextInt = new API("java/util/Random", "nextInt", "()I");
 //        API nextIntI = new API("java/util/Random", "nextInt", "(I)I");
         API ThreadLocalCurrent = new API("java/util/concurrent/ThreadLocalRandom", "current", "()Ljava/util/concurrent/ThreadLocalRandom;",FlakyTaintLabel.RANDOM);
-        API hashCode = new API("ANY","hashCode", "()Ljava/lang/Object;",FlakyTaintLabel.RANDOM);
+        API hashCode = new API("ANY","hashCode", "()I",FlakyTaintLabel.HASHCODE);
         API CalenderInstance = new API("java/util/Calendar","getInstance","()Ljava/util/Calendar;",FlakyTaintLabel.TIME);
         API LocalDateTimeNow = new API("java/time/LocalDateTime","now","()Ljava/time/LocalDataTime;",FlakyTaintLabel.TIME);
         API LocalDateNow = new API("java/time/LocalDate","now","()Ljava/time/LocalDate;",FlakyTaintLabel.TIME);
@@ -97,14 +97,51 @@ public class FlakyClassTracer extends ClassVisitor {
         //TODO: note this class will be replaced by Phosphor
 
         API SystemGetEnv = new API("java/lang/System","getenv","(Ljava/lang/String;)Ljava/lang/String;",FlakyTaintLabel.ENVIRONMENT);
-        API SystemGetEnvMap = new API("java/lang/System","getenv","()Ljava/lang/String;",FlakyTaintLabel.ENVIRONMENT);
+        API SystemGetEnvMap = new API("java/lang/System","getenv","()Ljava/util/Map;",FlakyTaintLabel.ENVIRONMENT);
+        API SystemGetProperty = new API("java/lang/System","getProperty","()Ljava/lang/String;",FlakyTaintLabel.ENVIRONMENT);
 
         API TotalMemory = new API("java/lang/Runtime","totalMemory","()J",FlakyTaintLabel.RESOURCE);
         API FreeMemory = new API("java/lang/Runtime","freeMemory","()J",FlakyTaintLabel.RESOURCE);
         API MaxMemory = new API("java/lang/Runtime","maxMemory","()J",FlakyTaintLabel.RESOURCE);
         API AvailableProcessors = new API("java/lang/Runtime","availableProcessors","()I",FlakyTaintLabel.RESOURCE);
 
-        API GetLocalHost = new API("java/net/InetAddress","getLocalHost","()Ljava/net/InetAddress;",FlakyTaintLabel.ENVIRONMENT);
+        API InetAddressGetLocalHost = new API("java/net/InetAddress","getLocalHost","()Ljava/net/InetAddress;",FlakyTaintLabel.ENVIRONMENT);
+        API InetAddressGetByName = new API("java/net/InetAddress", "getByName", "(Ljava/lang/String;)Ljava/net/InetAddress;", FlakyTaintLabel.NETWORK);
+        API InetAddressGetAllByName = new API("java/net/InetAddress", "getAllByName", "(Ljava/lang/String;)[Ljava/net/InetAddress;", FlakyTaintLabel.NETWORK);
+        API SocketConnect = new API("java/net/Socket", "connect", "(Ljava/net/SocketAddress;I)V", FlakyTaintLabel.NETWORK);
+        API HttpURLConnectionConnect = new API("java/net/HttpURLConnection", "connect", "()V", FlakyTaintLabel.NETWORK);
+        API SocketChannelConnect = new API("java/nio/channels/SocketChannel", "connect", "(Ljava/net/SocketAddress;)Z", FlakyTaintLabel.NETWORK);
+        API AsynchronousSocketChannelGetLocalAddress = new API("java/nio/channels/AsynchronousSocketChannel", "getLocalAddress", "()Ljava/net/SocketAddress;", FlakyTaintLabel.ENVIRONMENT);
+        API SocketGetLocalAddress = new API("java/net/Socket", "getLocalAddress", "()Ljava/net/InetAddress;", FlakyTaintLabel.ENVIRONMENT);
+        API NetworkInterfaceGetByInetAddress = new API("java/net/NetworkInterface", "getByInetAddress", "(Ljava/net/InetAddress;)Ljava/net/NetworkInterface;", FlakyTaintLabel.ENVIRONMENT);
+        API NetworkInterfaceIsUp = new API("java/net/NetworkInterface", "isUp", "()Z", FlakyTaintLabel.ENVIRONMENT);
+        API ServerSocketBind = new API("java/net/ServerSocket", "bind", "(Ljava/net/SocketAddress;)V", FlakyTaintLabel.ENVIRONMENT);
+        API DatagramSocketBind = new API("java/net/DatagramSocket", "bind", "(Ljava/net/SocketAddress;)V", FlakyTaintLabel.ENVIRONMENT);
+        API ServerSocketAccept = new API("java/net/ServerSocket", "accept", "()Ljava/net/Socket;", FlakyTaintLabel.NETWORK);
+        API AsynchronousServerSocketChannelAccept = new API("java/nio/channels/AsynchronousServerSocketChannel", "accept", "()Ljava/util/concurrent/Future;", FlakyTaintLabel.NETWORK);
+        API NetworkInterfaceGetNetworkInterfaces = new API("java/net/NetworkInterface", "getNetworkInterfaces", "()Ljava/util/Enumeration;", FlakyTaintLabel.ENVIRONMENT);
+
+        API Inet4AddressGetLocalHost = new API("java/net/Inet4Address","getLocalHost","()Ljava/net/InetAddress;",FlakyTaintLabel.ENVIRONMENT);
+        API Inet6AddressGetLocalHost = new API("java/net/Inet6Address","getLocalHost","()Ljava/net/InetAddress;",FlakyTaintLabel.ENVIRONMENT);
+
+        API Inet4AddressGetByName = new API("java/net/Inet4Address", "getByName", "(Ljava/lang/String;)Ljava/net/InetAddress;", FlakyTaintLabel.NETWORK);
+        API Inet6AddressGetByName = new API("java/net/Inet6Address", "getByName", "(Ljava/lang/String;)Ljava/net/InetAddress;", FlakyTaintLabel.NETWORK);
+
+
+        API SSLSocketConnect = new API("javax/net/ssl/SSLSocket", "connect", "(Ljava/net/SocketAddress;I)V", FlakyTaintLabel.NETWORK);
+
+
+        API DatagramChannelConnect = new API("java/nio/channels/DatagramChannel", "connect", "(Ljava/net/SocketAddress;)Z", FlakyTaintLabel.NETWORK);
+
+
+
+        API SSLServerSocketBind = new API("javax/net/ssl/SSLServerSocket", "bind", "(Ljava/net/SocketAddress;)V", FlakyTaintLabel.ENVIRONMENT);
+
+
+        API SSLServerSocketAccept = new API("javax/net/ssl/SSLServerSocket", "accept", "()Ljava/net/Socket;", FlakyTaintLabel.NETWORK);
+
+
+
 //        Socket
 //System.currentTimeMillis()
 
@@ -142,11 +179,34 @@ public class FlakyClassTracer extends ClassVisitor {
                 RandomUUID,
                 SystemGetEnv,
                 SystemGetEnvMap,
+                SystemGetProperty,
                 TotalMemory,
                 FreeMemory,
                 MaxMemory,
                 AvailableProcessors,
-                GetLocalHost
+                InetAddressGetLocalHost,
+                InetAddressGetByName,
+                InetAddressGetAllByName,
+                SocketConnect,
+                HttpURLConnectionConnect,
+                SocketChannelConnect,
+                AsynchronousSocketChannelGetLocalAddress,
+                SocketGetLocalAddress,
+                NetworkInterfaceGetByInetAddress,
+                NetworkInterfaceIsUp,
+                ServerSocketBind,
+                DatagramSocketBind,
+                ServerSocketAccept,
+                AsynchronousServerSocketChannelAccept,
+                NetworkInterfaceGetNetworkInterfaces,
+                Inet4AddressGetLocalHost,
+                Inet6AddressGetLocalHost,
+                Inet4AddressGetByName,
+                Inet6AddressGetByName,
+                SSLSocketConnect,
+                DatagramChannelConnect,
+                SSLServerSocketBind,
+                SSLServerSocketAccept
         ));
 
         API DateClass = new API("java/util/Date","","()V",FlakyTaintLabel.TIME);
@@ -319,55 +379,55 @@ public class FlakyClassTracer extends ClassVisitor {
             }
         }
 
-        @Override
-        public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
-
-
-            super.visitFieldInsn(opcode, owner, name, descriptor);
-
-
-            if (opcode == PUTSTATIC) {
-                super.visitFieldInsn(GETSTATIC, owner, name, descriptor);
-
-                super.visitTypeInsn(NEW, taintClassLabel);
-                super.visitInsn(DUP);
-                super.visitLdcInsn(FlakyTaintLabel.STATIC);
-                super.visitLdcInsn(name);
-                super.visitLdcInsn(className);
-                super.visitLdcInsn(-1);
-                super.visitLdcInsn(getLabelIndex()); //label
-                super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
-                callTaintedMethod(descriptor);
-
-
-                String type = API.getType(descriptor);
-                if (!API.isPrimitiveType(type))
-                    super.visitTypeInsn(CHECKCAST, API.processClassType(descriptor));
-
-                for (API clazz : nonDeterministicClass) {
-                    if (("L" + clazz.getOwner() + ";").equals(descriptor)) {
-                        super.visitTypeInsn(NEW, taintClassLabel);
-                        super.visitInsn(DUP);
-                        super.visitLdcInsn(clazz.getFlakyType());
-                        super.visitLdcInsn(owner + "." + name);
-                        super.visitLdcInsn(className);
-                        super.visitLdcInsn(lineNumber);
-                        super.visitLdcInsn(getLabelIndex()); //label
-                        super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
-                        super.visitMethodInsn(Opcodes.INVOKESTATIC, tainterClass, "taintedReference", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
-
-                        super.visitTypeInsn(CHECKCAST, clazz.getOwner());
-                    }
-
-
-                }
-
-
-                super.visitFieldInsn(opcode, owner, name, descriptor);
-
-            }
-
-        }
+//        @Override
+//        public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
+//
+//
+//            super.visitFieldInsn(opcode, owner, name, descriptor);
+//
+//
+//            if (opcode == PUTSTATIC) {
+//                super.visitFieldInsn(GETSTATIC, owner, name, descriptor);
+//
+//                super.visitTypeInsn(NEW, taintClassLabel);
+//                super.visitInsn(DUP);
+//                super.visitLdcInsn(FlakyTaintLabel.STATIC);
+//                super.visitLdcInsn(name);
+//                super.visitLdcInsn(className);
+//                super.visitLdcInsn(-1);
+//                super.visitLdcInsn(getLabelIndex()); //label
+//                super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+//                callTaintedMethod(descriptor);
+//
+//
+//                String type = API.getType(descriptor);
+//                if (!API.isPrimitiveType(type))
+//                    super.visitTypeInsn(CHECKCAST, API.processClassType(descriptor));
+//
+//                for (API clazz : nonDeterministicClass) {
+//                    if (("L" + clazz.getOwner() + ";").equals(descriptor)) {
+//                        super.visitTypeInsn(NEW, taintClassLabel);
+//                        super.visitInsn(DUP);
+//                        super.visitLdcInsn(clazz.getFlakyType());
+//                        super.visitLdcInsn(owner + "." + name);
+//                        super.visitLdcInsn(className);
+//                        super.visitLdcInsn(lineNumber);
+//                        super.visitLdcInsn(getLabelIndex()); //label
+//                        super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+//                        super.visitMethodInsn(Opcodes.INVOKESTATIC, tainterClass, "taintedReference", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
+//
+//                        super.visitTypeInsn(CHECKCAST, clazz.getOwner());
+//                    }
+//
+//
+//                }
+//
+//
+//                super.visitFieldInsn(opcode, owner, name, descriptor);
+//
+//            }
+//
+//        }
 
 
     }
@@ -405,47 +465,47 @@ public class FlakyClassTracer extends ClassVisitor {
             super.visitLineNumber(line, start);
         }
 
-        @Override
-        public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
-
-
-            super.visitFieldInsn(opcode, owner, name, descriptor);
-
-
-            if (opcode == PUTSTATIC) {
-                super.visitFieldInsn(GETSTATIC, owner, name, descriptor);
-
-                super.visitTypeInsn(NEW, taintClassLabel);
-                super.visitInsn(DUP);
-                super.visitLdcInsn(FlakyTaintLabel.STATIC);
-                super.visitLdcInsn(name);
-                super.visitLdcInsn(className);
-                super.visitLdcInsn(lineNumber);
-                super.visitLdcInsn(getLabelIndex()); //label
-                super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
-                callTaintedMethod(descriptor);
-
-
-                String type = API.getType(descriptor);
-                if (!API.isPrimitiveType(type))
-                    super.visitTypeInsn(CHECKCAST, API.processClassType(descriptor));
-
-                super.visitFieldInsn(opcode, owner, name, descriptor);
-
-                //add whiteList
-
-                super.visitFieldInsn(GETSTATIC, owner, name, descriptor);
-
-
-                if (API.isPrimitiveType(type))
-                    callBoxingMethod(type);
-
-                super.visitLdcInsn(currentTestName);
-
-                super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, addWhiteListFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
-
-            }
-        }
+//        @Override
+//        public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
+//
+//
+//            super.visitFieldInsn(opcode, owner, name, descriptor);
+//
+//
+//            if (opcode == PUTSTATIC) {
+//                super.visitFieldInsn(GETSTATIC, owner, name, descriptor);
+//
+//                super.visitTypeInsn(NEW, taintClassLabel);
+//                super.visitInsn(DUP);
+//                super.visitLdcInsn(FlakyTaintLabel.STATIC);
+//                super.visitLdcInsn(name);
+//                super.visitLdcInsn(className);
+//                super.visitLdcInsn(lineNumber);
+//                super.visitLdcInsn(getLabelIndex()); //label
+//                super.visitMethodInsn(INVOKESPECIAL, taintClassLabel, "<init>", "(ILjava/lang/String;Ljava/lang/String;II)V", false);
+//                callTaintedMethod(descriptor);
+//
+//
+//                String type = API.getType(descriptor);
+//                if (!API.isPrimitiveType(type))
+//                    super.visitTypeInsn(CHECKCAST, API.processClassType(descriptor));
+//
+//                super.visitFieldInsn(opcode, owner, name, descriptor);
+//
+//                //add whiteList
+//
+//                super.visitFieldInsn(GETSTATIC, owner, name, descriptor);
+//
+//
+//                if (API.isPrimitiveType(type))
+//                    callBoxingMethod(type);
+//
+//                super.visitLdcInsn(currentTestName);
+//
+//                super.visitMethodInsn(INVOKESTATIC, trackerProxyClass, addWhiteListFunction, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
+//
+//            }
+//        }
 
 
         @Override
@@ -630,7 +690,7 @@ public class FlakyClassTracer extends ClassVisitor {
 
 
             for (API api : nonDeterministicAPI) {
-                if ((opcode == INVOKEVIRTUAL || opcode == INVOKESTATIC) && api.getOwner().equals(owner) && api.getName().equals(name) && api.getDescriptor().equals(descriptor)) {
+                if ((opcode == INVOKEVIRTUAL || opcode == INVOKESTATIC) && (api.getOwner().equals(owner) || api.getOwner().equals("ANY"))&& api.getName().equals(name) && api.getDescriptor().equals(descriptor)) {
 
 
                     super.visitTypeInsn(NEW, taintClassLabel);

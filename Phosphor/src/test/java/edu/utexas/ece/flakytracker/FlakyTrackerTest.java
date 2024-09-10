@@ -2,6 +2,7 @@ package edu.utexas.ece.flakytracker;
 
 
 import com.mifmif.common.regex.Generex;
+import dk.brics.automaton.*;
 import edu.columbia.cs.psl.phosphor.instrumenter.ClinitRetransformClassVisitor;
 import edu.columbia.cs.psl.phosphor.runtime.MultiTainter;
 import edu.utexas.ece.flakytracker.agent.FlakyClassTracer;
@@ -12,10 +13,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.*;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.Printer;
@@ -23,7 +21,9 @@ import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -124,20 +124,45 @@ public class FlakyTrackerTest {
 //    }
 
 
+
+//    @Test
+//    public void parseClassFile() throws IOException {
+//        String className =  "org.springframework.jdbc.core.JdbcTemplate";
+////        className = "com.github.javafaker.Faker$Address";
+//        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
+//        boolean asmCode = true;
+//        ClassReader reader = new ClassReader(className);
+//        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
+//        FlakyClassTracer visitor = new FlakyClassTracer(writer);
+////        ClassVisitor visitor = new ClassVisitor(org.objectweb.asm.Opcodes.ASM9, writer) {};
+//
+//        reader.accept(visitor, 0);
+//        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
+//
+//    }
+
     @Test
-    public void parseClassFile() throws IOException {
-        String className =  "dk.brics.automaton.RegExp";
-        className = "edu.utexas.ece.flakytracker.FlakyTrackerTest";
-        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
-        boolean asmCode = true;
-        ClassReader reader = new ClassReader(className);
-        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
-        FlakyClassTracer visitor = new FlakyClassTracer(writer);
-        reader.accept(visitor, 0);
-        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
-
+    public void testAutomaton() throws Throwable {
+        RegExp regExp = new RegExp("string");
+        boolean a = true;
+        MultiTainter.taintedBoolean(a,100);
+        regExp.setAllowMutate(a);
+        regExp = MultiTainter.taintedReference(regExp, "ha");
+        regExp.toAutomaton();
     }
-
+    @Test
+    public void test291_1() throws Throwable {
+        java.util.Comparator<org.apache.commons.csv.CSVRecord> cSVRecordComparator0 = null;
+        com.google.code.externalsorting.csv.CsvSortOptions.Builder builder3 = new com.google.code.externalsorting.csv.CsvSortOptions.Builder(cSVRecordComparator0, (int) (byte) 1, (long) (byte) -1);
+       java.util.Comparator<org.apache.commons.csv.CSVRecord> cSVRecordComparator16 = null;
+        com.google.code.externalsorting.csv.CsvSortOptions.Builder builder19 = new com.google.code.externalsorting.csv.CsvSortOptions.Builder(cSVRecordComparator16, (int) (byte) 1, (long) (byte) -1);
+        com.google.code.externalsorting.csv.CsvSortOptions.Builder builder21 = builder19.skipHeader(true);
+        com.google.code.externalsorting.csv.CsvSortOptions csvSortOptions22 = builder21.build();
+        org.apache.commons.csv.CSVFormat cSVFormat24 = csvSortOptions22.getFormat();
+        com.google.code.externalsorting.csv.CsvSortOptions.Builder builder26 = builder3.format(cSVFormat24);
+        long long27 = com.google.code.externalsorting.csv.SizeEstimator.estimatedSizeOf((java.lang.Object) builder26);
+        org.junit.Assert.assertTrue("'" + long27 + "' != '" + 194L + "'", long27 == 194L);
+    }
     @Test
     public void parseASMFile() throws IOException{
         String className = "com.github.edgar615.util.base.Randoms";
@@ -206,14 +231,15 @@ public void test078_1() throws Throwable {
 //    java.lang.String str1 = conjuror0.conjureFirstName();
     java.util.Date date4 = conjuror0.conjureBirthDate((int) (short) 0, (int) ' ');
 //    java.lang.String str5 = conjuror0.conjureLastName();
-//    java.lang.String str7 = conjuror0.conjureString("Hurst");
+    java.lang.String str7 = conjuror0.conjureString("Hurst");
     Generex generex = new Generex("regex");
 //    java.util.Date date10 = conjuror0.conjureBirthDate((int) (short) 100, (int) (short) 1);
 // flaky "12) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals("'" + str1 + "' != '" + "Roger" + "'", str1, "Roger");
     org.junit.Assert.assertNotNull(date4);
 //// flaky "11) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals(date4.toString(), "Thu Jan 07 15:38:01 GMT 1993");
 //    org.junit.Assert.assertEquals("'" + str5 + "' != '" + "Parry" + "'", str5, "Parry");
-//    org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Hurst" + "'", str7, "Hurst");
+    FlakyUtil.checkTainted(str7,"test014");
+    org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Hurst" + "'", str7, "Hurst");
 //    org.junit.Assert.assertNotNull(date10);
 // flaky "7) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals(date10.toString(), "Sat Jun 27 01:25:49 GMT 1936");
 }
@@ -252,5 +278,39 @@ public void test078_1() throws Throwable {
         org.junit.Assert.assertTrue("'" + long15 + "' != '" + 2L + "'", long15 == 2L);
         org.junit.Assert.assertTrue("'" + long17 + "' != '" + 3L + "'", long17 == 3L);
         org.junit.Assert.assertTrue("'" + long19 + "' != '" + 55L + "'", long19 == 55L);
+    }
+
+    @Test
+    public void test024_1() throws Throwable {
+        com.apifortress.apiffaker.F f0 = new com.apifortress.apiffaker.F();
+        MultiTainter.taintedReference(f0,"haha");
+        java.lang.String str1 = f0.country();
+        java.lang.String str2 = f0.cityPrefix();
+        java.lang.String str3 = f0.mobile();
+        org.junit.Assert.assertEquals("'" + str1 + "' != '" + "Kazakhstan" + "'", str1, "Kazakhstan");
+// flaky "1) test024(TestGroup100Case0)":         org.junit.Assert.assertEquals("'" + str2 + "' != '" + "Lake" + "'", str2, "Lake");
+// flaky "1) test024(TestGroup100Case0)":         org.junit.Assert.assertEquals("'" + str3 + "' != '" + "192-874-9079" + "'", str3, "192-874-9079");
+    }
+   @Test
+    public void test092_1() throws Throwable {
+        org.dataone.cn.dao.ReplicationDaoMetacatImpl replicationDaoMetacatImpl0 = MultiTainter.taintedReference(new org.dataone.cn.dao.ReplicationDaoMetacatImpl(), "a");
+        org.dataone.cn.log.MetricEvent metricEvent1 = org.dataone.cn.log.MetricEvent.LOG_AGGREGATION_HARVEST_RETRIEVED;
+        org.dataone.service.types.v1.NodeReference nodeReference2 = null;
+        org.dataone.service.types.v1.Identifier identifier3 = null;
+        org.dataone.cn.log.MetricLogEntry metricLogEntry5 = new org.dataone.cn.log.MetricLogEntry(metricEvent1, nodeReference2, identifier3, "smreplicationpolicy");
+        org.dataone.cn.log.MetricEvent metricEvent6 = metricLogEntry5.getEvent();
+        java.util.Date date7 = metricLogEntry5.getDateLogged();
+        // The following exception was thrown during execution in test generation
+        try {
+//            int a = MultiTainter.taintedInt(0,"a");
+            java.util.List<org.dataone.service.types.v1.Identifier> identifierList10 = replicationDaoMetacatImpl0.getCompletedCoordinatingNodeReplicasByDate(date7,a, (int) 'a');
+            org.junit.Assert.fail("Expected exception of type org.springframework.jdbc.BadSqlGrammarException; message: PreparedStatementCallback; bad SQL grammar []; nested exception is org.h2.jdbc.JdbcSQLException: Table \"SMREPLICATIONSTATUS\" not found; SQL statement:?SELECT DISTINCT guid, date_verified  FROM  smreplicationstatus  WHERE date_verified <= ?   AND status = 'COMPLETED'   AND member_node = 'cnDev'  ORDER BY date_verified ASC; [42102-163]");
+        } catch (org.springframework.jdbc.BadSqlGrammarException e) {
+            // Expected exception.
+        }
+        org.junit.Assert.assertTrue("'" + metricEvent1 + "' != '" + org.dataone.cn.log.MetricEvent.LOG_AGGREGATION_HARVEST_RETRIEVED + "'", metricEvent1.equals(org.dataone.cn.log.MetricEvent.LOG_AGGREGATION_HARVEST_RETRIEVED));
+        org.junit.Assert.assertTrue("'" + metricEvent6 + "' != '" + org.dataone.cn.log.MetricEvent.LOG_AGGREGATION_HARVEST_RETRIEVED + "'", metricEvent6.equals(org.dataone.cn.log.MetricEvent.LOG_AGGREGATION_HARVEST_RETRIEVED));
+        org.junit.Assert.assertNotNull(date7);
+        org.junit.Assert.assertEquals(date7.toString(), "Mon Aug 26 08:13:57 GMT 2024");
     }
 }
