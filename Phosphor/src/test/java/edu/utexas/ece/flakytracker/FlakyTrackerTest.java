@@ -120,21 +120,21 @@ public class FlakyTrackerTest {
 
 
 
-//    @Test
-//    public void parseClassFile() throws IOException {
-//        String className =  "org.springframework.jdbc.core.JdbcTemplate";
-////        className = "com.github.javafaker.Faker$Address";
-//        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
-//        boolean asmCode = true;
-//        ClassReader reader = new ClassReader(className);
-//        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
-//        FlakyClassTracer visitor = new FlakyClassTracer(writer);
-////        ClassVisitor visitor = new ClassVisitor(org.objectweb.asm.Opcodes.ASM9, writer) {};
-//
-//        reader.accept(visitor, 0);
-//        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
-//
-//    }
+    @Test
+    public void parseClassFile() throws IOException {
+        String className =  "edu.utexas.ece.flakytracker.FlakyTrackerTest";
+//        className = "com.github.javafaker.Faker$Address";
+        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
+        boolean asmCode = true;
+        ClassReader reader = new ClassReader(className);
+        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
+        FlakyClassTracer visitor = new FlakyClassTracer(writer);
+//        ClassVisitor visitor = new ClassVisitor(org.objectweb.asm.Opcodes.ASM9, writer) {};
+
+        reader.accept(visitor, 0);
+        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
+
+    }
 @Test
 public void test078_1() throws Throwable {
     com.kestreldigital.conjuror.Conjuror conjuror0 = new com.kestreldigital.conjuror.Conjuror();
