@@ -38,57 +38,52 @@ public class FlakyTrackerTest {
     static Random e = new Random();
     static final Random f = new Random();
     private static final Random SHARED_RANDOM = new Random();
-    @Test
-    public void test02(){
-//        b = 1;
-        Random r = new Random();
-        int x = r.nextInt();
-        int y = b;
-        y = SHARED_RANDOM.nextInt();
-        FlakyUtil.checkTainted(e,"aa");
-        org.junit.Assert.assertEquals("equal",y,2);  // static but not flaky
-        org.junit.Assert.assertEquals("equal",c,3);  // possible flaky
-        org.junit.Assert.assertEquals("not equal", x, 3); //random
-    }
+//    @Test
+//    public void test02(){
+////        b = 1;
+//        Random r = new Random();
+//        int x = r.nextInt();
+//        int y = b;
+//        y = SHARED_RANDOM.nextInt();
+//        FlakyUtil.checkTainted(e,"aa");
+//        org.junit.Assert.assertEquals("equal",y,2);  // static but not flaky
+//        org.junit.Assert.assertEquals("equal",c,3);  // possible flaky
+//        org.junit.Assert.assertEquals("not equal", x, 3); //random
+//    }
 
-    @Test
-
-    public void test071() throws Throwable {
-
-        java.util.Locale locale0 = null;
-
-        java.util.Random random1 = null;
-
-        com.github.javafaker.service.RandomService randomService2 = new com.github.javafaker.service.RandomService(random1);
-
-        long long4 = randomService2.nextLong((long) 'a');
-
-        // The following exception was thrown during execution in test generation
-
-        try {
-
-            com.github.javafaker.Faker faker5 = new com.github.javafaker.Faker(locale0, randomService2);
-
-            org.junit.Assert.fail("Expected exception of type java.lang.IllegalArgumentException; message: locale is required");
-
-        } catch (java.lang.IllegalArgumentException e) {
-
-            // Expected exception.
-
-        }
-        FlakyUtil.checkTainted(long4,"a");
-        FlakyUtil.checkTainted("'" + long4 + "' != '" + 62L + "'","string");
-
-
-
-        org.junit.Assert.assertTrue("'" + long4 + "' != '" + 62L + "'", long4 == 62L);
-
-    }
-    @Test
-    public void test113_1() throws Throwable {
-//        java.security.PrivateKey privateKey0 = lich.tool.encryptionAndDecryption.core.Base.getRootGMPrivateKey();
-//        org.junit.Assert.assertNull(privateKey0);
-    }
+//    @Test
+//
+//    public void test071() throws Throwable {
+//
+//        java.util.Locale locale0 = null;
+//
+//        java.util.Random random1 = null;
+//
+//        com.github.javafaker.service.RandomService randomService2 = new com.github.javafaker.service.RandomService(random1);
+//
+//        long long4 = randomService2.nextLong((long) 'a');
+//
+//        // The following exception was thrown during execution in test generation
+//
+//        try {
+//
+//            com.github.javafaker.Faker faker5 = new com.github.javafaker.Faker(locale0, randomService2);
+//
+//            org.junit.Assert.fail("Expected exception of type java.lang.IllegalArgumentException; message: locale is required");
+//
+//        } catch (java.lang.IllegalArgumentException e) {
+//
+//            // Expected exception.
+//
+//        }
+//        FlakyUtil.checkTainted(long4,"a");
+//        FlakyUtil.checkTainted("'" + long4 + "' != '" + 62L + "'","string");
+//
+//
+//
+//        org.junit.Assert.assertTrue("'" + long4 + "' != '" + 62L + "'", long4 == 62L);
+//
+//    }
 
 //    @Test
 //    public void parseClassFile() throws IOException {
@@ -140,7 +135,24 @@ public class FlakyTrackerTest {
 //        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
 //
 //    }
-
+@Test
+public void test078_1() throws Throwable {
+    com.kestreldigital.conjuror.Conjuror conjuror0 = new com.kestreldigital.conjuror.Conjuror();
+    java.lang.String str1 = conjuror0.conjureFirstName();
+    java.util.Date date4 = conjuror0.conjureBirthDate((int) (short) 0, (int) ' ');
+    java.lang.String str5 = conjuror0.conjureLastName();
+    java.lang.String str7 = conjuror0.conjureString("Hurst");
+    java.util.Date date10 = conjuror0.conjureBirthDate((int) (short) 100, (int) (short) 1);
+//    FlakyUtil.checkTainted(str1,"roger");
+    org.junit.Assert.assertEquals("'" + str1 + "' != '" + "Roger" + "'", str1, "Roger");
+    org.junit.Assert.assertNotNull(date4);
+//    FlakyUtil.checkTainted(str7,"hurst");
+// flaky "11) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals(date4.toString(), "Thu Jan 07 15:38:01 GMT 1993");
+// flaky "8) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals("'" + str5 + "' != '" + "Parry" + "'", str5, "Parry");
+    org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Hurst" + "'", str7, "Hurst");
+    org.junit.Assert.assertNotNull(date10);//    org.junit.Assert.assertNotNull(date10);
+// flaky "7) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals(date10.toString(), "Sat Jun 27 01:25:49 GMT 1936");
+}
     @Test
     public void testAutomaton() throws Throwable {
         RegExp regExp = new RegExp("string");
@@ -225,24 +237,7 @@ public class FlakyTrackerTest {
 //        org.junit.Assert.assertTrue("'" + long5 + "' != '" + 1L + "'", long5 == 1L);
 //        org.junit.Assert.assertNull(str6);
 //    }
-@Test
-public void test078_1() throws Throwable {
-    com.kestreldigital.conjuror.Conjuror conjuror0 = new com.kestreldigital.conjuror.Conjuror();
-//    java.lang.String str1 = conjuror0.conjureFirstName();
-    java.util.Date date4 = conjuror0.conjureBirthDate((int) (short) 0, (int) ' ');
-//    java.lang.String str5 = conjuror0.conjureLastName();
-    java.lang.String str7 = conjuror0.conjureString("Hurst");
-    Generex generex = new Generex("regex");
-//    java.util.Date date10 = conjuror0.conjureBirthDate((int) (short) 100, (int) (short) 1);
-// flaky "12) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals("'" + str1 + "' != '" + "Roger" + "'", str1, "Roger");
-    org.junit.Assert.assertNotNull(date4);
-//// flaky "11) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals(date4.toString(), "Thu Jan 07 15:38:01 GMT 1993");
-//    org.junit.Assert.assertEquals("'" + str5 + "' != '" + "Parry" + "'", str5, "Parry");
-    FlakyUtil.checkTainted(str7,"test014");
-    org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Hurst" + "'", str7, "Hurst");
-//    org.junit.Assert.assertNotNull(date10);
-// flaky "7) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals(date10.toString(), "Sat Jun 27 01:25:49 GMT 1936");
-}
+
     @Test
     public void test014_1() throws Throwable {
 
