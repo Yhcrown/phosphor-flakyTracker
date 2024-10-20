@@ -119,7 +119,6 @@ public class FlakyTrackerTest {
 //    }
 
 
-<<<<<<< HEAD
     @Test
     public void parseClassFile() throws IOException {
         String className = "org/springframework/jdbc/core/JdbcTemplate";
@@ -132,9 +131,62 @@ public class FlakyTrackerTest {
         FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
 
     }
-=======
->>>>>>> 4198dbe451af68135625fff56373b044de878ac8
 
+    @Test
+    public void parseClassFile() throws IOException {
+        String className =  "edu.utexas.ece.flakytracker.FlakyTrackerTest";
+//        className = "com.github.javafaker.Faker$Address";
+        int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
+        boolean asmCode = true;
+        ClassReader reader = new ClassReader(className);
+        final ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS );
+        FlakyClassTracer visitor = new FlakyClassTracer(writer);
+//        ClassVisitor visitor = new ClassVisitor(org.objectweb.asm.Opcodes.ASM9, writer) {};
+
+        reader.accept(visitor, 0);
+        FileUtils.writeByteArrayToFile(new File("target/classes/flaky/AfterTracker.class"),writer.toByteArray());
+
+    }
+@Test
+public void test078_1() throws Throwable {
+    com.kestreldigital.conjuror.Conjuror conjuror0 = new com.kestreldigital.conjuror.Conjuror();
+    java.lang.String str1 = conjuror0.conjureFirstName();
+    java.util.Date date4 = conjuror0.conjureBirthDate((int) (short) 0, (int) ' ');
+    java.lang.String str5 = conjuror0.conjureLastName();
+    java.lang.String str7 = conjuror0.conjureString("Hurst");
+    java.util.Date date10 = conjuror0.conjureBirthDate((int) (short) 100, (int) (short) 1);
+//    FlakyUtil.checkTainted(str1,"roger");
+    org.junit.Assert.assertEquals("'" + str1 + "' != '" + "Roger" + "'", str1, "Roger");
+    org.junit.Assert.assertNotNull(date4);
+//    FlakyUtil.checkTainted(str7,"hurst");
+// flaky "11) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals(date4.toString(), "Thu Jan 07 15:38:01 GMT 1993");
+// flaky "8) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals("'" + str5 + "' != '" + "Parry" + "'", str5, "Parry");
+    org.junit.Assert.assertEquals("'" + str7 + "' != '" + "Hurst" + "'", str7, "Hurst");
+    org.junit.Assert.assertNotNull(date10);//    org.junit.Assert.assertNotNull(date10);
+// flaky "7) test015(TestGroup100Case0)":         org.junit.Assert.assertEquals(date10.toString(), "Sat Jun 27 01:25:49 GMT 1936");
+}
+    @Test
+    public void testAutomaton() throws Throwable {
+        RegExp regExp = new RegExp("string");
+        boolean a = true;
+        MultiTainter.taintedBoolean(a,100);
+        regExp.setAllowMutate(a);
+        regExp = MultiTainter.taintedReference(regExp, "ha");
+        regExp.toAutomaton();
+    }
+    @Test
+    public void test291_1() throws Throwable {
+        java.util.Comparator<org.apache.commons.csv.CSVRecord> cSVRecordComparator0 = null;
+        com.google.code.externalsorting.csv.CsvSortOptions.Builder builder3 = new com.google.code.externalsorting.csv.CsvSortOptions.Builder(cSVRecordComparator0, (int) (byte) 1, (long) (byte) -1);
+       java.util.Comparator<org.apache.commons.csv.CSVRecord> cSVRecordComparator16 = null;
+        com.google.code.externalsorting.csv.CsvSortOptions.Builder builder19 = new com.google.code.externalsorting.csv.CsvSortOptions.Builder(cSVRecordComparator16, (int) (byte) 1, (long) (byte) -1);
+        com.google.code.externalsorting.csv.CsvSortOptions.Builder builder21 = builder19.skipHeader(true);
+        com.google.code.externalsorting.csv.CsvSortOptions csvSortOptions22 = builder21.build();
+        org.apache.commons.csv.CSVFormat cSVFormat24 = csvSortOptions22.getFormat();
+        com.google.code.externalsorting.csv.CsvSortOptions.Builder builder26 = builder3.format(cSVFormat24);
+        long long27 = com.google.code.externalsorting.csv.SizeEstimator.estimatedSizeOf((java.lang.Object) builder26);
+        org.junit.Assert.assertTrue("'" + long27 + "' != '" + 194L + "'", long27 == 194L);
+    }
     @Test
     public void parseClassFile() throws IOException {
         String className =  "edu.utexas.ece.flakytracker.FlakyTrackerTest";

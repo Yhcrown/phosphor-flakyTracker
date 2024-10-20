@@ -141,7 +141,6 @@ public class FlakyClassTracer extends ClassVisitor {
         API SSLServerSocketAccept = new API("javax/net/ssl/SSLServerSocket", "accept", "()Ljava/net/Socket;", FlakyTaintLabel.NETWORK);
 
 
-        
 //        Socket
 //System.currentTimeMillis()
 
