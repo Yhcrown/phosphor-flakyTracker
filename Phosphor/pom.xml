@@ -141,10 +141,13 @@
     </profiles>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.github.819548945/tool.encryptionAndDecryption.core -->
+
+<!--        org/springframework/jdbc/core/JdbcTemplate-->
         <dependency>
-            <groupId>com.github.819548945</groupId>
-            <artifactId>tool.encryptionAndDecryption.core</artifactId>
-            <version>0.1.8</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>3.1.4.RELEASE</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
