@@ -127,7 +127,7 @@ public class Instrumenter {
                 || StringUtils.startsWith(owner, "java/lang/invoke/LambdaMetafactory")
                 || StringUtils.startsWith(owner, "edu/columbia/cs/psl/phosphor/struct/TaintedWith")
                 || StringUtils.startsWith(owner, "java/util/regex/HashDecompositions") //Huge constant array/hashmap
-                || StringUtils.startsWith(owner, "edu/utexas/ece/");
+                || StringUtils.startsWith(owner, "edu/utexas/ece/flakytracker/agent/FlakyTrackerTransformer");
     }
 
     public static void analyzeClass(InputStream is) {
